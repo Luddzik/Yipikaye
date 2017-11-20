@@ -16,10 +16,6 @@ public class MazeGenerator : MonoBehaviour {
     public float charHeight = 0.72f;
     [SerializeField]
     private float tileHeight = 0.01f;
-    [SerializeField]
-    private List<Tile> managedTiles;
-    [SerializeField]
-    private List<Tile> unmanagedTiles;
 
     [SerializeField]
     private List<Vector2Int> pathwayToExit;
@@ -39,8 +35,6 @@ public class MazeGenerator : MonoBehaviour {
 
     private void Awake()
     {
-        managedTiles = new List<Tile>();
-        unmanagedTiles = new List<Tile>();
         pathwayToExit = new List<Vector2Int>();
         unmanagedTileVectors = new List<Vector2Int>();
     }
@@ -80,10 +74,12 @@ public class MazeGenerator : MonoBehaviour {
         localsquareLengthY = 1f / mazeModel.Row;
 
         //Distribute Tiles
-        DistributeTileType();
+        DistributeTiles();
 
         controller.transform.localPosition = mazeModel.grid[start.x, start.y].transform.localPosition + Vector3.up * controller.transform.localScale.y;
         controller.CurrentCoor = start;
+
+        ChangeStartFloorColor();
 
         //Create LineRenderers
         for (int i = 0; i < mazeModel.Row + mazeModel.Column + 2; i++)
@@ -96,13 +92,10 @@ public class MazeGenerator : MonoBehaviour {
             m_lineRenderers.Add(temp.GetComponent<LineRenderer>());
         }
 
-
-        //InstantiateTiles();
-
         modifying = false;
     }
 
-    void DistributeTileType()
+    void DistributeTiles()
     {
         //Randomize the Start and the Exit
         start = new Vector2Int(Random.Range(0, mazeModel.Column), Random.Range(0, mazeModel.Row));
@@ -130,12 +123,10 @@ public class MazeGenerator : MonoBehaviour {
         {
             for (int j = 0; j < mazeModel.Row; j++)
             {
-                cantPassFwd = false;
-                cantPassBk = false;
-                cantPassLft = false;
-                cantPassRht = false;
+                cantPassFwd = false; cantPassBk = false; cantPassLft = false; cantPassRht = false;
                 isOuter = false;
                 wallCount = 0;
+                //Make sure there are outer walls on the boundary squares
                 if (i == 0)
                 {
                     cantPassLft = true;
@@ -161,6 +152,7 @@ public class MazeGenerator : MonoBehaviour {
                     wallCount++;
                 }
 
+                //Randomize whether there are walls on the four sides
                 if (!pathwayToExit.Contains(new Vector2Int(i, j)))
                 {
                     float wallFwd = 0, wallBk=0, wallRht=0, wallLft=0;
@@ -182,6 +174,7 @@ public class MazeGenerator : MonoBehaviour {
                     }
                 }
 
+                //Instantiate tiles
                 temp = Instantiate(floorTilePrefab, tilesParent);
                 mazeModel.grid[i, j] = temp.GetComponent<Tile>();
                 mazeModel.grid[i, j].Set(cantPassFwd, cantPassBk, cantPassLft, cantPassRht, isOuter);
@@ -191,8 +184,6 @@ public class MazeGenerator : MonoBehaviour {
                 temp.transform.localScale = tileScale;
                 temp.name = "Tile " + i + ", " + j;
 
-                InstantiateWalls(isOuter, i, j);
-                mazeModel.grid[exit.x, exit.y].transform.GetChild(1).GetComponent<MeshRenderer>().material = controller.GetComponent<MeshRenderer>().material;
                 //Find center position of the maze
                 //if ((mazeModel.CenterPos - mazeModel.grid[i, j].localPosition).magnitude <= Mathf.Min(localsquareLengthX, localsquareLengthY) / 2)
                 //{
@@ -201,8 +192,63 @@ public class MazeGenerator : MonoBehaviour {
                 //}
             }
         }
-        print("Walls distributed");
 
+        //Check if there are squares blocking from 4 sides
+        ClearBlockingSquare();
+
+        print("Walls distributed");
+    }
+
+    void ChangeStartFloorColor()
+    {
+        mazeModel.grid[exit.x, exit.y].transform.GetChild(1).GetComponent<MeshRenderer>().material = controller.GetComponent<MeshRenderer>().material;
+    }
+
+    void ClearBlockingSquare()
+    {
+        int blockCount;
+        int randomInt;
+        for (int i = 0; i < mazeModel.Column; i++)
+        {
+            for (int j = 0; j < mazeModel.Row; j++)
+            {
+                blockCount = 0;
+                if (mazeModel.grid[i, j].impassable[(int)MazeModel.Direction.Forward] || (j < mazeModel.Row - 1 && mazeModel.grid[i, j + 1].impassable[(int)MazeModel.Direction.Back]))
+                    blockCount++;
+                if (mazeModel.grid[i, j].impassable[(int)MazeModel.Direction.Back] || (j > 0 && mazeModel.grid[i, j - 1].impassable[(int)MazeModel.Direction.Forward]))
+                    blockCount++;
+                if (mazeModel.grid[i, j].impassable[(int)MazeModel.Direction.Left] || (i > 0 && mazeModel.grid[i - 1, j].impassable[(int)MazeModel.Direction.Right]))
+                    blockCount++;
+                if (mazeModel.grid[i, j].impassable[(int)MazeModel.Direction.Right] || (i > mazeModel.Column && mazeModel.grid[i + 1, j].impassable[(int)MazeModel.Direction.Left]))
+                    blockCount++;
+                if (blockCount >= 4)
+                {
+                    randomInt = Random.Range(0, 4);
+                    if (randomInt == 0 && j < mazeModel.Row - 1)
+                    {
+                        mazeModel.grid[i, j].impassable[randomInt] = false;
+                        mazeModel.grid[i, j + 1].impassable[(int)MazeModel.Direction.Back] = false;
+                    }
+                    else if (randomInt == 1 && j > 0)
+                    {
+                        mazeModel.grid[i, j].impassable[randomInt] = false;
+                        mazeModel.grid[i, j - 1].impassable[(int)MazeModel.Direction.Forward] = false;
+                    }
+                    else if (randomInt == 2 && i > 0)
+                    {
+                        mazeModel.grid[i, j].impassable[randomInt] = false;
+                        mazeModel.grid[i - 1, j].impassable[(int)MazeModel.Direction.Right] = false;
+                    }
+                    else if(randomInt ==3 && i > mazeModel.Column)
+                    {
+                        mazeModel.grid[i, j].impassable[randomInt] = false;
+                        mazeModel.grid[i + 1, j].impassable[(int)MazeModel.Direction.Left] = false;
+                    }
+                }
+
+                InstantiateWalls(mazeModel.grid[i, j].isOuter , i, j);
+            }
+        }
     }
 
     void GenerateExitPathway(Vector2Int start, Vector2Int exit)
@@ -210,17 +256,20 @@ public class MazeGenerator : MonoBehaviour {
         for (int i = 0; i < mazeModel.Column; i++)
             for (int j = 0; j < mazeModel.Row; j++)
                 unmanagedTileVectors.Add(new Vector2Int(i, j));
+        //Add start point coordinate to the path
         pathwayToExit.Add(unmanagedTileVectors[mazeModel.Row * start.x + start.y]);
+        //Remove start point coordinate from the unmanaged tiles list
         unmanagedTileVectors.RemoveAt(mazeModel.Row * start.x + start.y);
 
-        Vector2Int backOff = Vector2Int.zero;
-        Vector2Int current = new Vector2Int(start.x, start.y);
-        Vector2Int tryMove = Vector2Int.zero;
-        Vector2Int tryDir = Vector2Int.zero;
-        Vector2 exitDir = Vector2.zero;
+        Vector2Int backOff = Vector2Int.zero; //Make sure there is a step back, life will be easier
+        Vector2Int current = new Vector2Int(start.x, start.y); //Current coordinate to find the next step 
+        Vector2Int tryMove = Vector2Int.zero; //The step it try to go to
+        Vector2Int tryDir = Vector2Int.zero; //The direction it try to go to
+        Vector2 exitDir = Vector2.zero; //The direction from current coor. to the exit
         int randomInt; //0: fwd, 1:back, 2:left, 3:right
-        int struckCount;
-        bool toWall;
+        int struckCount; //Record how many times it strucks
+        bool toWall; //Is it crashing to the wall?
+        //Path-random-finding
         while (!pathwayToExit[pathwayToExit.Count - 1].Equals(exit))
         {
             struckCount = 0;
@@ -285,7 +334,7 @@ public class MazeGenerator : MonoBehaviour {
     void InstantiateWalls(bool isOuter, int i, int j)
     {
         GameObject tempWall = null;
-        if (mazeModel.grid[i, j].impassable[0])
+        if (mazeModel.grid[i, j].impassable[0]) //front side can't pass
         {
             if (isOuter && j == mazeModel.Row - 1)
             {
@@ -301,14 +350,14 @@ public class MazeGenerator : MonoBehaviour {
                 tempWall.transform.localPosition = new Vector3(0, 0, -2f);
             }
         }
-        if (mazeModel.grid[i, j].impassable[1])
+        if (mazeModel.grid[i, j].impassable[1]) //back side can't pass
         {
             if (isOuter && j == 0)
             {
                 tempWall = Instantiate(outdoorWallPrefab, mazeModel.grid[i, j].localBk);
                 tempWall.transform.localRotation = Quaternion.Euler(0, 180, 0);
                 tempWall.transform.localPosition = Vector3.zero;
-            tempWall.transform.localScale = new Vector3(1.8f, 1, 1);
+                tempWall.transform.localScale = new Vector3(1.8f, 1, 1);
             }
             else
             {
@@ -317,36 +366,36 @@ public class MazeGenerator : MonoBehaviour {
                 tempWall.transform.localPosition = new Vector3(0, 0, 2f);
             }
         }
-        if(mazeModel.grid[i, j].impassable[2])
+        if(mazeModel.grid[i, j].impassable[2]) //left side can't pass
         {
             if (isOuter && i == 0)
             {
                 tempWall = Instantiate(outdoorWallPrefab, mazeModel.grid[i, j].localLft);
                 tempWall.transform.localRotation = Quaternion.Euler(0, -90, 0);
                 tempWall.transform.localPosition = Vector3.zero;
-            tempWall.transform.localScale = new Vector3(1.8f, 1, 1);
+                tempWall.transform.localScale = new Vector3(1.8f, 1, 1);
             }
             else
             {
                 tempWall = Instantiate(indoorWallPrefab, mazeModel.grid[i, j].localLft);
                 tempWall.transform.localRotation = Quaternion.Euler(-90, -90, 90);
-             tempWall.transform.localPosition = new Vector3(2, 0, 0);
+                tempWall.transform.localPosition = new Vector3(2, 0, 0);
             }
         }
-        if (mazeModel.grid[i, j].impassable[3])
+        if (mazeModel.grid[i, j].impassable[3]) //right side can't pass
         {
             if (isOuter && i == mazeModel.Column - 1)
             {
                 tempWall = Instantiate(outdoorWallPrefab, mazeModel.grid[i, j].localRht);
                 tempWall.transform.localRotation = Quaternion.Euler(0, 90, 0);
-             tempWall.transform.localPosition = Vector3.zero;
-            tempWall.transform.localScale = new Vector3(1.8f, 1, 1);
+                tempWall.transform.localPosition = Vector3.zero;
+                 tempWall.transform.localScale = new Vector3(1.8f, 1, 1);
             }
             else
             {
                 tempWall = Instantiate(indoorWallPrefab, mazeModel.grid[i, j].localRht);
                 tempWall.transform.localRotation = Quaternion.Euler(-90, 90, 90);
-                 tempWall.transform.localPosition = new Vector3(-2f, 0, 0);
+                tempWall.transform.localPosition = new Vector3(-2f, 0, 0);
             }
         }
     }
