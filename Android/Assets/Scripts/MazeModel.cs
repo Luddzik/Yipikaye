@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MazeModel : MonoBehaviour {
-    public enum Direction { Forward, Back, Right, Left }
+    public enum Direction { Forward, Back, Left, Right }
 
     //private Quaternion originalRot;
     private Vector3 centerPos;
