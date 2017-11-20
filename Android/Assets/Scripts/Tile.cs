@@ -6,7 +6,7 @@ public class Tile : MonoBehaviour{
 
     //public enum Type { Floor, OneSideWall, TwoSideWall, OneDoorOneWall, OneSideDoor, TwoSideDoor, CornerWall, DeadEnd}
     public enum Content { Start, Exit, Pickup, Enemy, Wall}
-    public bool[] impassable; //fwd, back, left, right
+    public bool[] impassable; //fwd, back, right, left
     public bool isOuter;
     //public Type type = Type.Floor;
     public Content[] content;
@@ -15,8 +15,8 @@ public class Tile : MonoBehaviour{
     public Vector3 localPosition = Vector3.zero;
     public Transform localFwd;
     public Transform localBk;
-    public Transform localLft;
     public Transform localRht;
+    public Transform localLft;
 
     //public Tile(bool canPassFwd, bool canPassBk, bool canPassLft, bool canPassRht, Vector3 pos, bool isOuter)
     //{
@@ -76,9 +76,9 @@ public class Tile : MonoBehaviour{
     public void Set(bool cantPassFwd, bool cantPassBk, bool cantPassLft, bool cantPassRht, bool isOuter)//, Content[] contents)
     {
         impassable[0] = cantPassFwd;
+        impassable[3] = cantPassRht;
         impassable[1] = cantPassBk;
         impassable[2] = cantPassLft;
-        impassable[3] = cantPassRht;
         this.isOuter = isOuter;
         //this.content = contents;
     }
