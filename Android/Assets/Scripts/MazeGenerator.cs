@@ -4,19 +4,22 @@ using UnityEngine;
 
 public class MazeGenerator : MonoBehaviour {
 
-    public GameObject floorTilePrefab;
-    public GameObject indoorWallPrefab;
-    public GameObject outdoorWallPrefab;
-    public GameObject linePrefab;
-    public Transform tilesParent;
+    [Header("Game Balance")]
+    [SerializeField, Range(0, 100)]
+    private float pickupChance;
+    [SerializeField, Range(0, 100)]
+    private float trapChance;
+    [SerializeField, Range(0, 100)]
+    private float EnemyChance;
+    [SerializeField, Range(0, 100)]
+    private float WallChance;
     [SerializeField]
-    private Swipe controller;
-    [SerializeField]
-    private MazeModel mazeModel;
+    private PropOption options;
+
+    [Header("Debug Variables")]
     public float charHeight = 0.72f;
     [SerializeField]
     private float tileHeight = 0.01f;
-
     [SerializeField]
     private List<Vector2Int> pathwayToExit;
     private List<Vector2Int> unmanagedTileVectors;
@@ -24,11 +27,24 @@ public class MazeGenerator : MonoBehaviour {
     Vector2Int start;
     [SerializeField]
     Vector2Int exit;
-
     private bool modifying;
     private Vector3 localPtZero;
     private float localsquareLengthX;
     private float localsquareLengthY;
+
+    [Header("Prefab")]
+    public GameObject floorTilePrefab;
+    public GameObject indoorWallPrefab;
+    public GameObject outdoorWallPrefab;
+    public GameObject linePrefab;
+    [Header("Reference")]
+    public Transform tilesParent;
+    [SerializeField]
+    private Swipe controller;
+    [SerializeField]
+    private MazeModel mazeModel;
+
+    
     
 
     private List<LineRenderer> m_lineRenderers;
@@ -455,4 +471,10 @@ public class MazeGenerator : MonoBehaviour {
         }
         m_lineRenderers.Clear();
     }
+}
+
+[System.Serializable]
+public class PropOption
+{
+    public bool Wall, Guard, Pickup, BallPillarFire, SpikeTrap, FireTrap, GasTrap, CrushingWall, Catapult;
 }

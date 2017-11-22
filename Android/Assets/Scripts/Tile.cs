@@ -5,7 +5,7 @@ using UnityEngine;
 public class Tile : MonoBehaviour{
 
     //public enum Type { Floor, OneSideWall, TwoSideWall, OneDoorOneWall, OneSideDoor, TwoSideDoor, CornerWall, DeadEnd}
-    public enum Content { Start, Exit, Pickup, Enemy, Wall}
+    public enum Content { Floor, Start, Exit, Pickup, Guard, Wall, BallPillarFire, SpikeTrap, FireTrap, GasTrap, CrushingWall, Catapult}
     public bool[] impassable; //fwd, back, right, left
     public bool isOuter;
     //public Type type = Type.Floor;
@@ -18,61 +18,6 @@ public class Tile : MonoBehaviour{
     public Transform localRht;
     public Transform localLft;
 
-    //public Tile(bool canPassFwd, bool canPassBk, bool canPassLft, bool canPassRht, Vector3 pos, bool isOuter)
-    //{
-    //    localPosition = pos;
-    //    //this.type = type;
-    //    //this.isOuter = isOuter;
-    //    facing = MazeModel.Direction.Forward;
-    //    impassable = new bool[4];
-    //    content = new Content[9];
-    //    impassable[0] = canPassFwd;
-    //    impassable[1] = canPassBk;
-    //    impassable[2] = canPassLft;
-    //    impassable[3] = canPassRht;
-    //    //switch (type)
-    //    //{
-    //    //    case Type.Floor:
-    //    //        impassable[0] = false;
-    //    //        impassable[1] = false;
-    //    //        impassable[2] = false;
-    //    //        impassable[3] = false;
-    //    //        break;
-    //    //    case Type.OneSideWall:
-    //    //        impassable[0] = true;
-    //    //        impassable[1] = false;
-    //    //        impassable[2] = false;
-    //    //        impassable[3] = false;
-    //    //        break;
-    //    //    case Type.TwoSideWall:
-    //    //        impassable[0] = true;
-    //    //        impassable[1] = true;
-    //    //        impassable[2] = false;
-    //    //        impassable[3] = false;
-    //    //        break;
-    //    //    case Type.OneDoorOneWall:
-    //    //        impassable[0] = false;
-    //    //        impassable[1] = true;
-    //    //        impassable[2] = false;
-    //    //        impassable[3] = false;
-    //    //        break;
-    //    //    case Type.OneSideDoor:
-    //    //        impassable[0] = false;
-    //    //        impassable[1] = false;
-    //    //        impassable[2] = false;
-    //    //        impassable[3] = false;
-    //    //        break;
-    //    //    case Type.TwoSideDoor:
-    //    //        impassable[0] = false;
-    //    //        impassable[1] = false;
-    //    //        impassable[2] = false;
-    //    //        impassable[3] = false;
-    //    //        break;
-    //    //}
-    //}
-
-
-
     public void Set(bool cantPassFwd, bool cantPassBk, bool cantPassLft, bool cantPassRht, bool isOuter)//, Content[] contents)
     {
         impassable[0] = cantPassFwd;
@@ -80,16 +25,85 @@ public class Tile : MonoBehaviour{
         impassable[1] = cantPassBk;
         impassable[2] = cantPassLft;
         this.isOuter = isOuter;
-        //this.content = contents;
+        content = new Content[14];
     }
 
-    public void CompleteRandomize()
+    public void CompleteRandomize(bool hasStart, bool hasExit, float PickupChance, float GuardChance, float WallChance, float BallPillarFireChance, float SpikeTrapChance, 
+        float FireTrapChance, float GasTrapChance, float CrushingWallChance, float CatapultChance)
     {
+        List<Content> unmanagedContent = new List<Content>();
+        for (int i = 0; i < content.Length; i++)
+            unmanagedContent.Add(content[i]);
+        Shuffle(ref unmanagedContent);
 
+        if (hasStart)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.Start;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
+        else if (hasExit)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.Exit;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
+        if(unmanagedContent.Count>0 && Random.value> PickupChance / 100)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.Pickup;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
+
+        if (unmanagedContent.Count > 0 && Random.value > GuardChance / 100)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.Guard;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
+        if (unmanagedContent.Count > 0 && Random.value > WallChance / 100)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.Wall;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
+        if (unmanagedContent.Count > 0 && Random.value > BallPillarFireChance / 100)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.BallPillarFire;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
+        if (unmanagedContent.Count > 0 && Random.value > SpikeTrapChance / 100)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.SpikeTrap;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
+        if (unmanagedContent.Count > 0 && Random.value > FireTrapChance / 100)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.FireTrap;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
+        if (unmanagedContent.Count > 0 && Random.value > GasTrapChance / 100)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.GasTrap;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
+        if (unmanagedContent.Count > 0 && Random.value > CrushingWallChance / 100)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.CrushingWall;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
+        if (unmanagedContent.Count > 0 && Random.value > CatapultChance / 100)
+        {
+            unmanagedContent[unmanagedContent.Count - 1] = Content.Catapult;
+            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+        }
     }
 
-    public void ClearPathRandomize()
+    public void Shuffle(ref List<Content> list)
     {
-
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = Random.Range(0, n + 1);
+            Content value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
     }
 }

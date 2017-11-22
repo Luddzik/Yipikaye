@@ -86,10 +86,10 @@ namespace UnityStandardAssets.CrossPlatformInput
 
         private void EnableControlRig(bool enabled)
         {
-            foreach (Transform t in transform)
-            {
-                t.gameObject.SetActive(enabled);
-            }
+            //foreach (Transform t in transform)
+            //{
+            //    t.gameObject.SetActive(enabled);
+            //}
         }
 
 #if UNITY_EDITOR

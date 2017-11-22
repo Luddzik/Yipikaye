@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityStandardAssets.CrossPlatformInput;
 using UnityEngine.UI;
 
 public class Swipe : MonoBehaviour
@@ -151,16 +150,16 @@ public class Swipe : MonoBehaviour
                             switch (i)
                             {
                                 case (int)GridSystem.Direction.Forward:
-                                    gridSystem.MoveCharacter(ref currentCoor, GridSystem.Direction.Forward, ref targetPos);
+                                    mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Forward, ref targetPos);
                                     break;
                                 case (int)GridSystem.Direction.Back:
-                                    gridSystem.MoveCharacter(ref currentCoor, GridSystem.Direction.Back, ref targetPos);
+                                    mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Back, ref targetPos);
                                     break;
                                 case (int)GridSystem.Direction.Right:
-                                    gridSystem.MoveCharacter(ref currentCoor, GridSystem.Direction.Right, ref targetPos);
+                                    mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Right, ref targetPos);
                                     break;
                                 case (int)GridSystem.Direction.Left:
-                                    gridSystem.MoveCharacter(ref currentCoor, GridSystem.Direction.Left, ref targetPos);
+                                    mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Left, ref targetPos);
                                     break;
                             }
                             moving = true;

@@ -1157,8 +1157,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1029340783}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 199, y: 112, z: 0}
-  m_LocalScale: {x: 0.20729165, y: 0.20729165, z: 0.20729165}
+  m_LocalPosition: {x: 218, y: 122.5, z: 0}
+  m_LocalScale: {x: 0.22708334, y: 0.22708334, z: 0.22708334}
   m_Children:
   - {fileID: 1932360044}
   - {fileID: 1080181753}
@@ -1634,6 +1634,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a168b08bb7c999c4590db06b30c88e24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pickupChance: 0
+  trapChance: 0
+  EnemyChance: 0
+  options:
+    Guard: 0
+    Pickup: 0
+    BallPillarFire: 0
+    SpikeTrap: 0
+    FireTrap: 0
+    GasTrap: 0
+    CrushingWall: 0
+    Catapult: 0
+  charHeight: 0.15
+  tileHeight: 0.01
+  pathwayToExit: []
+  start: {x: 0, y: 0}
+  exit: {x: 0, y: 0}
   floorTilePrefab: {fileID: 1805744540146380, guid: bb87de581a6014742a2b732edbc3f78b,
     type: 2}
   indoorWallPrefab: {fileID: 1880799294903812, guid: 1cf27fe7f84e89b4794c7b00c788fe97,
@@ -1644,13 +1661,6 @@ MonoBehaviour:
   tilesParent: {fileID: 2078217422}
   controller: {fileID: 435138157}
   mazeModel: {fileID: 1950880388}
-  charHeight: 0.15
-  tileHeight: 0.01
-  managedTiles: []
-  unmanagedTiles: []
-  pathwayToExit: []
-  start: {x: 0, y: 0}
-  exit: {x: 0, y: 0}
 --- !u!4 &1494161637
 Transform:
   m_ObjectHideFlags: 0
@@ -2405,7 +2415,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 01cd679a1b9ee48bf9c546f6ce2cb97e, type: 3}
+  - {fileID: 2100000, guid: 04a842e316b6f44bf8da702de26a8ed6, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
