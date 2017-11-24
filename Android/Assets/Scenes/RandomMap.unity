@@ -576,7 +576,7 @@ Transform:
   m_GameObject: {fileID: 435138155}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.115, z: 0}
-  m_LocalScale: {x: 0.022769883, y: 0.031325385, z: 0.022769883}
+  m_LocalScale: {x: 0.054922923, y: 0.07555958, z: 0.05492296}
   m_Children: []
   m_Father: {fileID: 1950880393}
   m_RootOrder: 0
@@ -1637,7 +1637,9 @@ MonoBehaviour:
   pickupChance: 0
   trapChance: 0
   EnemyChance: 0
+  WallChance: 0
   options:
+    Wall: 0
     Guard: 0
     Pickup: 0
     BallPillarFire: 0
@@ -1651,14 +1653,21 @@ MonoBehaviour:
   pathwayToExit: []
   start: {x: 0, y: 0}
   exit: {x: 0, y: 0}
-  floorTilePrefab: {fileID: 1805744540146380, guid: bb87de581a6014742a2b732edbc3f78b,
+  floorTilePrefab: {fileID: 1846161735492234, guid: bb87de581a6014742a2b732edbc3f78b,
     type: 2}
-  indoorWallPrefab: {fileID: 1880799294903812, guid: 1cf27fe7f84e89b4794c7b00c788fe97,
-    type: 2}
-  outdoorWallPrefab: {fileID: 1720937429178264, guid: fcb2018d9c62adb4da970f16915025a4,
-    type: 2}
+  pillarPrefabs:
+  - {fileID: 1153347101374354, guid: 8323e4f06262a7e408c0b8734d7f489c, type: 2}
+  - {fileID: 1849941701309256, guid: fbcb1392370f76748a8ab7203b88bfa7, type: 2}
+  - {fileID: 1865231336611468, guid: 11f7baefd4057c44dbb592407aebe8e4, type: 2}
+  indoorWallPrefabs:
+  - {fileID: 1061778591562914, guid: a6f45136077e31340983e7c491ae82a5, type: 2}
+  - {fileID: 1442106370377832, guid: 31f9b91bf96251348a71c0135a899e31, type: 2}
+  outdoorWallPrefabs:
+  - {fileID: 1122787440195148, guid: 5b834e13ddab335479679a01be667284, type: 2}
+  - {fileID: 1673924369218292, guid: 9368fbf3181c38847b935a38d8064d2d, type: 2}
   linePrefab: {fileID: 1155316172888790, guid: 877db8e5376a080438b2a5a37073f886, type: 2}
   tilesParent: {fileID: 2078217422}
+  pilarsParent: {fileID: 1724996816}
   controller: {fileID: 435138157}
   mazeModel: {fileID: 1950880388}
 --- !u!4 &1494161637
@@ -1818,6 +1827,34 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1628364317}
+--- !u!1 &1724996815
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1724996816}
+  m_Layer: 0
+  m_Name: Pillars
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1724996816
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1724996815}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1950880393}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1806415843
 GameObject:
   m_ObjectHideFlags: 0
@@ -2445,7 +2482,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.08, z: 1}
+  m_Size: {x: 1, y: 0, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &1950880392
 MeshFilter:
@@ -2466,6 +2503,7 @@ Transform:
   m_Children:
   - {fileID: 435138156}
   - {fileID: 2078217422}
+  - {fileID: 1724996816}
   m_Father: {fileID: 1878973022}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

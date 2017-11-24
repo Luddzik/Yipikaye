@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public class InnerTile
+{
+    public Tile.Content content;
+    public Vector3 localPosition;
+}
+
 public class Tile : MonoBehaviour{
 
     //public enum Type { Floor, OneSideWall, TwoSideWall, OneDoorOneWall, OneSideDoor, TwoSideDoor, CornerWall, DeadEnd}
@@ -25,7 +31,7 @@ public class Tile : MonoBehaviour{
         impassable[1] = cantPassBk;
         impassable[2] = cantPassLft;
         this.isOuter = isOuter;
-        content = new Content[14];
+        content = new Content[16];
     }
 
     public void CompleteRandomize(bool hasStart, bool hasExit, float PickupChance, float GuardChance, float WallChance, float BallPillarFireChance, float SpikeTrapChance, 
