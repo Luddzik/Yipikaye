@@ -16,7 +16,6 @@ public class Swipe : MonoBehaviour
         set
         {
             currentCoor = value;
-            //currentPos = gridSystem.GetPosition(currentCoor);
             currentPos = mazeModel.GetPosition(currentCoor);
             targetPos = currentPos;
         }
@@ -132,10 +131,10 @@ public class Swipe : MonoBehaviour
 
                     swipeVector = Vector3.ProjectOnPlane(swipeVector, transform.parent.up).normalized;
                     //debugText2.text = swipeVector + "";
-                    relAngle[(int)GridSystem.Direction.Forward] = Vector3.Angle(swipeVector, transform.parent.forward);
-                    relAngle[(int)GridSystem.Direction.Back] = Vector3.Angle(swipeVector, -transform.parent.forward);
-                    relAngle[(int)GridSystem.Direction.Right] = Vector3.Angle(swipeVector, transform.parent.right);
-                    relAngle[(int)GridSystem.Direction.Left] = Vector3.Angle(swipeVector, -transform.parent.right);
+                    relAngle[(int)MazeModel.Direction.Forward] = Vector3.Angle(swipeVector, transform.parent.forward);
+                    relAngle[(int)MazeModel.Direction.Back] = Vector3.Angle(swipeVector, -transform.parent.forward);
+                    relAngle[(int)MazeModel.Direction.Right] = Vector3.Angle(swipeVector, transform.parent.right);
+                    relAngle[(int)MazeModel.Direction.Left] = Vector3.Angle(swipeVector, -transform.parent.right);
 
                     for (int i = 0; i < relAngle.Length; i++)
                     {

@@ -23,9 +23,7 @@ public class MazeGenerator : MonoBehaviour {
     [SerializeField]
     private List<Vector2Int> pathwayToExit;
     private List<Vector2Int> unmanagedTileVectors;
-    [SerializeField]
     Vector2Int start;
-    [SerializeField]
     Vector2Int exit;
     private bool modifying;
     private Vector3 localPtZero;
@@ -35,7 +33,12 @@ public class MazeGenerator : MonoBehaviour {
     private Vector3 tileScale;
 
     [Header("Prefab")]
+    public GameObject guardPrefab;
+    public GameObject pickUpPrefab;
+    public GameObject startPtPrefab;
+    public GameObject exitPrefab;
     public GameObject floorTilePrefab;
+    public GameObject cornerPrefab;
     public GameObject[] pillarPrefabs;
     public GameObject[] indoorWallPrefabs;
     public GameObject[] outdoorWallPrefabs;
@@ -45,7 +48,7 @@ public class MazeGenerator : MonoBehaviour {
     public Transform tilesParent;
     public Transform pilarsParent;
     [SerializeField]
-    private Swipe controller;
+    private CapsuleController controller;
     [SerializeField]
     private MazeModel mazeModel;
 
@@ -59,6 +62,10 @@ public class MazeGenerator : MonoBehaviour {
     private void Start()
     {
         localPtZero = new Vector3(-0.5f, charHeight, -0.5f);
+        if (!options.Wall) WallChance = 0;
+        if (!options.Guard) EnemyChance = 0;
+        if (!options.Pickup) pickupChance = 0;
+
         m_lineRenderers = new List<LineRenderer>();
         SetupGrid();
     }
@@ -95,20 +102,22 @@ public class MazeGenerator : MonoBehaviour {
 
         InstantiatePillars();
 
-        controller.transform.localPosition = mazeModel.grid[start.x, start.y].transform.localPosition + Vector3.up * controller.transform.localScale.y;
-        controller.CurrentCoor = start;
+        InstantiateOuterCorner();
 
-        ChangeStartFloorColor();
+        //controller.transform.localPosition = mazeModel.grid[start.x, start.y].transform.localPosition + Vector3.up * controller.transform.localScale.y;
+        //controller.CurrentCoor = start;
+
+        //ChangeStartFloorColor();
 
         //Create LineRenderers
         for (int i = 0; i < mazeModel.Row + mazeModel.Column + 2; i++)
         {
-            GameObject temp = Instantiate(linePrefab, mazeModel.transform);
-            temp.transform.localPosition = Vector3.zero;
-            temp.transform.localRotation = Quaternion.identity;
-            temp.name = "Line " + i;
-            temp.GetComponent<LineRenderer>().useWorldSpace = false;
-            m_lineRenderers.Add(temp.GetComponent<LineRenderer>());
+            GameObject tempLine = Instantiate(linePrefab, mazeModel.transform);
+            tempLine.transform.localPosition = Vector3.zero;
+            tempLine.transform.localRotation = Quaternion.identity;
+            tempLine.name = "Line " + i;
+            tempLine.GetComponent<LineRenderer>().useWorldSpace = false;
+            m_lineRenderers.Add(tempLine.GetComponent<LineRenderer>());
         }
 
         modifying = false;
@@ -206,6 +215,8 @@ public class MazeGenerator : MonoBehaviour {
                 temp.transform.localScale = tileScale;
                 temp.name = "Tile " + i + ", " + j;
 
+                InstantiateContents(i, j);
+
                 //Find center position of the maze
                 //if ((mazeModel.CenterPos - mazeModel.grid[i, j].localPosition).magnitude <= Mathf.Min(localsquareLengthX, localsquareLengthY) / 2)
                 //{
@@ -223,10 +234,43 @@ public class MazeGenerator : MonoBehaviour {
         print("Walls distributed");
     }
 
-    void ChangeStartFloorColor()
+    void InstantiateContents(int i, int j)
     {
-        mazeModel.grid[exit.x, exit.y].transform.GetChild(1).GetComponent<MeshRenderer>().material = controller.GetComponent<MeshRenderer>().material;
+        GameObject temp = null;
+        bool hasStart = (start.x == i && start.y == j);
+        bool hasExit = (exit.x == i && exit.y == j);
+
+        mazeModel.grid[i, j].CompleteRandomize(hasStart, hasExit, ref pickupChance, ref EnemyChance, ref WallChance);
+        for (int k = 0; k < Tile.contentPositions.Length; k++)
+        {
+            switch(mazeModel.grid[i, j].contents[k].content)
+            {
+                case Tile.Content.Guard:
+                    temp = Instantiate(guardPrefab, mazeModel.grid[i, j].transform);
+                    temp.name = "Guard";
+                    break;
+                case Tile.Content.Pickup:
+                    temp = Instantiate(pickUpPrefab, mazeModel.grid[i, j].transform);
+                    temp.name = "Pickup";
+                    break;
+                case Tile.Content.Start:
+                    temp = Instantiate(startPtPrefab, mazeModel.grid[i, j].transform);
+                    temp.name = "Start";
+                    break;
+                case Tile.Content.Exit:
+                    temp = Instantiate(exitPrefab, mazeModel.grid[i, j].transform);
+                    temp.name = "Exit";
+                    break;
+            }
+            if(temp!=null)
+                temp.transform.localPosition = Tile.contentPositions[k];
+        }
     }
+
+    //void ChangeStartFloorColor()
+    //{
+    //    mazeModel.grid[exit.x, exit.y].transform.GetChild(1).GetComponent<MeshRenderer>().material = guardPrefab.GetComponent<MeshRenderer>().sharedMaterial;
+    //}
 
     void ClearBlockingSquare()
     {
@@ -375,74 +419,160 @@ public class MazeGenerator : MonoBehaviour {
         {
             for (int j = 0; j < mazeModel.Row; j++)
             {
-                if (mazeModel.grid[i, j].impassable[0]) //front side can't pass
+                if (mazeModel.grid[i, j].isOuter)
                 {
-                    if (mazeModel.grid[i, j].isOuter && j == mazeModel.Row - 1)
+                    //Forward walls
+                    if (j == mazeModel.Row - 1) 
                     {
                         randomIndex = Random.Range(0, outdoorWallPrefabs.Length);
                         tempWall = Instantiate(outdoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
-                        tempWall.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                        //tempWall.transform.localPosition = new Vector3()
+                        tempWall.name = "Fwd Wall";
                     }
                     else
                     {
                         randomIndex = Random.Range(0, indoorWallPrefabs.Length);
                         tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
-                        tempWall.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                        tempWall.transform.localPosition = Vector3.zero;
-                        //print(i + ", " + j + " created fwd wall, impassable[0] = " + mazeModel.grid[i, j].impassable[0])
+                        if (mazeModel.grid[i, j].impassable[0])
+                        {
+                            tempWall.GetComponent<Animator>().enabled = false;
+                            tempWall.name = "Fwd Wall";
+                        }
+                        else
+                        {
+                            tempWall.GetComponent<Animator>().SetBool("FwdOrRight", true);
+                            tempWall.name = "Fwd Door";
+                        }
                     }
+                    tempWall.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                    //Backward walls
+                    if (j == 0)
+                    {
+                        randomIndex = Random.Range(0, outdoorWallPrefabs.Length);
+                        tempWall = Instantiate(outdoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
+                        tempWall.name = "Back Wall";
+                    }
+                    else
+                    {
+                        randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                        tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
+                        if (mazeModel.grid[i, j].impassable[1])
+                        {
+                            tempWall.GetComponent<Animator>().enabled = false;
+                            tempWall.name = "Back Wall";
+                        }
+                        else
+                        {
+                            tempWall.GetComponent<Animator>().SetBool("FwdOrRight", false);
+                            tempWall.name = "Back Door";
+                        }
+                    }
+                    tempWall.transform.localRotation = Quaternion.Euler(0, 180, 0);
+
+                    //Left walls
+                    if (i == 0)
+                    {
+                        randomIndex = Random.Range(0, outdoorWallPrefabs.Length);
+                        tempWall = Instantiate(outdoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
+                        tempWall.name = "Left Wall";
+                    }
+                    else
+                    {
+                        randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                        tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
+                        if (mazeModel.grid[i, j].impassable[2])
+                        {
+                            tempWall.GetComponent<Animator>().enabled = false;
+                            tempWall.name = "Left Wall";
+                        }
+                        else
+                        {
+                            tempWall.GetComponent<Animator>().SetBool("FwdOrRight", false);
+                            tempWall.name = "Left Door";
+                        }
+                    }
+                    tempWall.transform.localRotation = Quaternion.Euler(0, -90, 0);
+
+                    //Right walls
+                    if (i == mazeModel.Column - 1)
+                    {
+                        randomIndex = Random.Range(0, outdoorWallPrefabs.Length);
+                        tempWall = Instantiate(outdoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
+                        tempWall.name = "Right Wall";
+                    }
+                    else
+                    {
+                        randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                        tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
+                        if (mazeModel.grid[i, j].impassable[3])
+                        {
+                            tempWall.GetComponent<Animator>().enabled = false;
+                            tempWall.name = "Right Wall";
+                        }
+                        else
+                        {
+                            tempWall.GetComponent<Animator>().SetBool("FwdOrRight", true);
+                            tempWall.name = "Right Door";
+                        }
+                    }
+                    tempWall.transform.localRotation = Quaternion.Euler(0, 90, 0);
                 }
-                if (mazeModel.grid[i, j].impassable[1]) //back side can't pass
+                else
                 {
-                    if (mazeModel.grid[i, j].isOuter && j == 0)
+                    randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                    tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
+                    if (mazeModel.grid[i, j].impassable[0])
                     {
-                        randomIndex = Random.Range(0, outdoorWallPrefabs.Length);
-                        tempWall = Instantiate(outdoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
-                        tempWall.transform.localRotation = Quaternion.Euler(0, 180, 0);
-                        tempWall.transform.localPosition = Vector3.zero;
+                        tempWall.GetComponent<Animator>().enabled = false;
+                        tempWall.name = "Fwd Wall";
                     }
                     else
                     {
-                        randomIndex = Random.Range(0, indoorWallPrefabs.Length);
-                        tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
-                        tempWall.transform.localRotation = Quaternion.Euler(0, 180, 0);
-                        tempWall.transform.localPosition = Vector3.zero;
+                        tempWall.GetComponent<Animator>().SetBool("FwdOrRight", true);
+                        tempWall.name = "Fwd Door";
                     }
-                }
-                if (mazeModel.grid[i, j].impassable[2]) //left side can't pass
-                {
-                    if (mazeModel.grid[i, j].isOuter && i == 0)
+                    tempWall.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+                    randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                    tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
+                    if (mazeModel.grid[i, j].impassable[1])
                     {
-                        randomIndex = Random.Range(0, outdoorWallPrefabs.Length);
-                        tempWall = Instantiate(outdoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
-                        tempWall.transform.localRotation = Quaternion.Euler(0, -90, 0);
-                        tempWall.transform.localPosition = Vector3.zero;
+                        tempWall.GetComponent<Animator>().enabled = false;
+                        tempWall.name = "Back Wall";
                     }
                     else
                     {
-                        randomIndex = Random.Range(0, indoorWallPrefabs.Length);
-                        tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
-                        tempWall.transform.localRotation = Quaternion.Euler(0, -90, 0);
-                        tempWall.transform.localPosition = Vector3.zero;
+                        tempWall.GetComponent<Animator>().SetBool(0, false);
+                        tempWall.name = "Back Door";
                     }
-                }
-                if (mazeModel.grid[i, j].impassable[3]) //right side can't pass
-                {
-                    if (mazeModel.grid[i, j].isOuter && i == mazeModel.Column - 1)
+                    tempWall.transform.localRotation = Quaternion.Euler(0, 180, 0);
+
+                    randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                    tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
+                    if (mazeModel.grid[i, j].impassable[2])
                     {
-                        randomIndex = Random.Range(0, outdoorWallPrefabs.Length);
-                        tempWall = Instantiate(outdoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
-                        tempWall.transform.localRotation = Quaternion.Euler(0, 90, 0);
-                        tempWall.transform.localPosition = Vector3.zero;
+                        tempWall.GetComponent<Animator>().enabled = false;
+                        tempWall.name = "Left Wall";
                     }
                     else
                     {
-                        randomIndex = Random.Range(0, indoorWallPrefabs.Length);
-                        tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
-                        tempWall.transform.localRotation = Quaternion.Euler(0, 90, 0);
-                        tempWall.transform.localPosition = Vector3.zero;
+                        tempWall.GetComponent<Animator>().SetBool(0, false);
+                        tempWall.name = "Left Door";
                     }
+                    tempWall.transform.localRotation = Quaternion.Euler(0, -90, 0);
+
+                    randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                    tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i, j].transform);
+                    if (mazeModel.grid[i, j].impassable[3])
+                    {
+                        tempWall.GetComponent<Animator>().enabled = false;
+                        tempWall.name = "Right Wall";
+                    }
+                    else
+                    {
+                        tempWall.GetComponent<Animator>().SetBool(0, true);
+                        tempWall.name = "Right Door";
+                    }
+                    tempWall.transform.localRotation = Quaternion.Euler(0, 90, 0);
                 }
             }
         }
@@ -457,17 +587,11 @@ public class MazeGenerator : MonoBehaviour {
             for (int j = 0; j <= mazeModel.Row; j++)
             {
                 if (j == 0 && i == 0 || j == mazeModel.Row && i == mazeModel.Column || j == 0 && i == mazeModel.Column || i == 0 && j == mazeModel.Row)
-                {
                     temp = Instantiate(pillarPrefabs[0], pilarsParent);
-                }
                 else if (j == 0 || i == 0 || j == mazeModel.Row || i == mazeModel.Column)
-                {
                     temp = Instantiate(pillarPrefabs[1], pilarsParent);
-                }
                 else
-                {
                     temp = Instantiate(pillarPrefabs[2], pilarsParent);
-                }
                 temp.transform.localScale = tileScale;
                 temp.transform.localPosition = new Vector3(localPtZero.x + 1f / mazeModel.Column * i, tileHeight, localPtZero.z + 1f / mazeModel.Row * j);
                 if (j == mazeModel.Row && i == mazeModel.Column)
@@ -477,12 +601,29 @@ public class MazeGenerator : MonoBehaviour {
                 else if (j == mazeModel.Row)
                     temp.transform.localPosition = new Vector3(localPtZero.x + 1f / mazeModel.Column * i, tileHeight, localPtZero.z + 1f / mazeModel.Row * j - 0.2f * tileScale.z);
                 if ((i==0 || i == mazeModel.Column) && j > 0 && j < mazeModel.Row)
-                {
                     temp.transform.localEulerAngles = new Vector3(-90, 90, 0);
-                    //temp.transform.localPosition = new Vector3(localPtZero.x + 1f / mazeModel.Column * i - 0.2f * tileScale.x, tileHeight, localPtZero.z + 1f / mazeModel.Row * j - 0.2f * tileScale.z);
-                }
             }
         }
+    }
+
+    void InstantiateOuterCorner()
+    {
+        GameObject temp = null;
+        temp = Instantiate(cornerPrefab, pilarsParent);
+        temp.transform.localPosition = new Vector3(0.5f, tileHeight, 0.5f);
+        temp.transform.localScale = tileScale;
+        temp = Instantiate(cornerPrefab, pilarsParent);
+        temp.transform.localPosition = new Vector3(-0.5f, tileHeight, 0.5f);
+        temp.transform.localEulerAngles = Vector3.up * -90;
+        temp.transform.localScale = tileScale;
+        temp = Instantiate(cornerPrefab, pilarsParent);
+        temp.transform.localPosition = new Vector3(0.5f, tileHeight, -0.5f);
+        temp.transform.localEulerAngles = Vector3.up * 90;
+        temp.transform.localScale = tileScale;
+        temp = Instantiate(cornerPrefab, pilarsParent);
+        temp.transform.localPosition = new Vector3(-0.5f, tileHeight, -0.5f);
+        temp.transform.localEulerAngles = Vector3.up * 180;
+        temp.transform.localScale = tileScale;
     }
 
     private void DrawGrid()
