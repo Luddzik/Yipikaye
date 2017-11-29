@@ -52,7 +52,7 @@ public class FieldOfView : MonoBehaviour {
 
 	public Vector3 DirectionFormAngle(float angleD)
     {
-        angleD += transform.eulerAngles.y;
-        return new Vector3(Mathf.Sin(angleD), 0, Mathf.Cos(angleD));
+        angleD += transform.localEulerAngles.y;
+        return transform.TransformDirection(new Vector3(Mathf.Sin(angleD), 0, Mathf.Cos(angleD)));
     }
 }

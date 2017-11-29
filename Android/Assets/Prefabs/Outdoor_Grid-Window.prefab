@@ -87,6 +87,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4162822041340108}
+  - component: {fileID: 65043328304821574}
   m_Layer: 9
   m_Name: Outdoor_Grid-Window
   m_TagString: Untagged
@@ -1323,6 +1324,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1757764885112132}
   m_Mesh: {fileID: 4300002, guid: eb2c2930d0567614a92438b5c5f0cb8f, type: 3}
+--- !u!65 &65043328304821574
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1122787440195148}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.9562402, y: 1.17, z: 0.22484398}
+  m_Center: {x: 0.0006916523, y: 0.6, z: 2.1074371}
 --- !u!95 &95325545449351406
 Animator:
   serializedVersion: 3
