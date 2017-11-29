@@ -60,16 +60,16 @@ public class CapsuleController : MonoBehaviour {
                     switch (i)
                     {
                         case (int)MazeModel.Direction.Forward:
-                            moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Forward, ref targetPos);
+                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                             break;
                         case (int)MazeModel.Direction.Back:
-                            moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Back, ref targetPos);
+                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
                             break;
                         case (int)MazeModel.Direction.Right:
-                            moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Right, ref targetPos);
+                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                             break;
                         case (int)MazeModel.Direction.Left:
-                            moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Left, ref targetPos);
+                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
                             break;
                     }
                     tForLerp = 0;

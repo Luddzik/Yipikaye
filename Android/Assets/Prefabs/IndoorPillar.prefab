@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33367505217213484}
   - component: {fileID: 23109890876982322}
   - component: {fileID: 95525248470843150}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: IndoorPillar
   m_TagString: Untagged
   m_Icon: {fileID: 0}

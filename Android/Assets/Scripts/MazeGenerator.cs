@@ -28,8 +28,8 @@ public class MazeGenerator : MonoBehaviour {
     private List<Vector2Int> unmanagedTileVectors;
     [SerializeField]
     Vector2Int start;
-    [SerializeField]
-    Vector3 startPosition;
+    //[SerializeField]
+    //Vector3 startPosition;
     Vector2Int exit;
     private bool modifying;
     private Vector3 localPtZero;
@@ -122,7 +122,7 @@ public class MazeGenerator : MonoBehaviour {
 
         InstantiateOuterCorner();
 
-        controller.transform.position = startPosition;
+        //controller.transform.position = startPosition;
 
         //ChangeStartFloorColor();
 
@@ -264,31 +264,39 @@ public class MazeGenerator : MonoBehaviour {
             switch (mazeModel.outerGrid[i, j].contents[k].content)
             {
                 case Tile.Content.Guard:
-                    tempContent = Instantiate(guardPrefab, mazeModel.outerGrid[i, j].transform);
+                    tempContent = Instantiate(guardPrefab, mazeModel.transform.GetChild(1));
+                    tempContent.GetComponent<EnemyAI>().mazeController = mazeModel.GetComponent<MazeController>();
+                    tempContent.GetComponent<EnemyAI>().mazeModel = mazeModel;
+                    tempContent.GetComponent<EnemyAI>().CurrentCoor = new Vector2Int(i * 4 + k % 4, j * 4 + k / 4);
                     tempContent.name = "Guard";
                     break;
                 case Tile.Content.Block:
-                    tempContent = Instantiate(blockPrefab, mazeModel.outerGrid[i, j].transform);
+                    tempContent = Instantiate(blockPrefab, mazeModel.transform.GetChild(1)); //mazeModel.outerGrid[i, j].transform);
                     tempContent.name = "Block";
                     break;
                 case Tile.Content.Pickup:
-                    tempContent = Instantiate(pickUpPrefab, mazeModel.outerGrid[i, j].transform);
+                    tempContent = Instantiate(pickUpPrefab, mazeModel.transform.GetChild(1));
                     tempContent.name = "Pickup";
                     break;
                 case Tile.Content.Start:
-                    tempContent = Instantiate(startPtPrefab, mazeModel.outerGrid[i, j].transform);
+                    tempContent = Instantiate(startPtPrefab, mazeModel.transform.GetChild(1));
                     tempContent.name = "Start";
                     controller.CurrentCoor = new Vector2Int(i * 4 + k % 4, j * 4 + k / 4);
                     break;
                 case Tile.Content.Exit:
-                    tempContent = Instantiate(exitPrefab, mazeModel.outerGrid[i, j].transform);
+                    tempContent = Instantiate(exitPrefab, mazeModel.transform.GetChild(1));
                     tempContent.name = "Exit";
                     break;
             }
-            if(tempContent != null)
-                tempContent.transform.localPosition = Tile.contentPositions[k];
+            if (tempContent != null)
+            {
+                tempContent.transform.localPosition = mazeModel.GetPosition(new Vector2Int(i * 4 + k % 4, j * 4 + k / 4)); //Tile.contentPositions[k]);
+                tempContent.transform.localScale = new Vector3(tempContent.transform.localScale.x * tileScale.x,
+                    tempContent.transform.localScale.y * tileScale.y,
+                    tempContent.transform.localScale.z * tileScale.z);
+            }
             if (mazeModel.outerGrid[i, j].contents[k].content == Tile.Content.Start)
-                startPosition = tempContent.transform.position;
+                controller.transform.position = tempContent.transform.position;
         }
     }
 

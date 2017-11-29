@@ -6,10 +6,17 @@ public class GravityPull : MonoBehaviour {
 
     private void FixedUpdate()
     {
-        for (int i = 0; i < transform.childCount; i++)
+        transform.GetChild(0).GetComponent<Rigidbody>().AddForce(-transform.up * transform.GetChild(0).GetComponent<Rigidbody>().mass, ForceMode.Force);
+        for (int i = 0; i < transform.GetChild(1).childCount; i++)
         {
-            if(transform.GetChild(i).GetComponent<Rigidbody>())
-                transform.GetChild(i).GetComponent<Rigidbody>().AddForce(-transform.up * transform.GetChild(i).GetComponent<Rigidbody>().mass, ForceMode.Force);
+            if (transform.GetChild(1).GetChild(i).GetComponent<Rigidbody>())
+                transform.GetChild(1).GetChild(i).GetComponent<Rigidbody>().AddForce(-transform.up * transform.GetChild(1).GetChild(i).GetComponent<Rigidbody>().mass, ForceMode.Force);
         }
+
+        //for (int i = 0; i < transform.childCount; i++)
+        //{
+        //    if(transform.GetChild(i).GetComponent<Rigidbody>())
+        //        transform.GetChild(i).GetComponent<Rigidbody>().AddForce(-transform.up * transform.GetChild(i).GetComponent<Rigidbody>().mass, ForceMode.Force);
+        //}
     }
 }

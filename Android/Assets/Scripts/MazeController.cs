@@ -29,33 +29,69 @@ public class MazeController : MonoBehaviour
 
     
 
-    public bool MoveCharacter(ref Vector2Int curCoor, MazeModel.Direction direction, ref Vector3 position)
+    public bool MoveCharacter(Transform charTransform ,ref Vector2Int curCoor, MazeModel.Direction direction, ref Vector3 position, bool restrictInTheSquare)
     {
         switch (direction)
         {
             case MazeModel.Direction.Forward:
-                if (curCoor.y >= mazeModel.Row * 4 - 1)
+                //if (character is on the boundary) or (Forward wall in current square is impassible)
+                //  don't move
+                if (curCoor.y >= mazeModel.Row * 4 - 1 || (curCoor.y % 4 == 3 && mazeModel.outerGrid[curCoor.x/4, curCoor.y/4].impassable[0]))
+                    return false;
+                //For char. who move only in the same square
+                if (restrictInTheSquare && curCoor.y % 4 == 3)
+                    return false;
+                //if there is a block in the front
+                if (mazeModel.outerGrid[curCoor.x / 4, (curCoor.y + 1) / 4].contents[(curCoor.x % 4) + ((curCoor.y+1) % 4) * 4].content == Tile.Content.Block)
                     return false;
                 curCoor += Vector2Int.up;
-                print("Move forward");
+                charTransform.localEulerAngles = Vector3.zero;
+                //print("Move forward");
                 break;
             case MazeModel.Direction.Back:
-                if (curCoor.y <= 0)
+                //if (character is on the boundary) or (Back wall in current square is impassible)
+                //  don't move
+                if (curCoor.y <= 0 || (curCoor.y % 4 == 0 && mazeModel.outerGrid[curCoor.x / 4, curCoor.y / 4].impassable[1]))
+                    return false;
+                //For char. who move only in the same square
+                if (restrictInTheSquare && curCoor.y % 4 == 0)
+                    return false;
+                //if there is a block in the back
+                if (mazeModel.outerGrid[curCoor.x / 4, (curCoor.y - 1) / 4].contents[(curCoor.x % 4) + ((curCoor.y-1) % 4) * 4].content == Tile.Content.Block)
                     return false;
                 curCoor += Vector2Int.down;
-                print("Move back");
+                charTransform.localEulerAngles = Vector3.up * 180;
+                //print("Move back");
                 break;
             case MazeModel.Direction.Left:
-                if (curCoor.x <= 0)
+                //if (character is on the boundary) or (Left wall in current square is impassible)
+                //  don't move
+                if (curCoor.x <= 0 || (curCoor.x % 4 == 0 && mazeModel.outerGrid[curCoor.x / 4, curCoor.y / 4].impassable[2]))
+                    return false;
+                //For char. who move only in the same square
+                if (restrictInTheSquare && curCoor.x % 4 == 0)
+                    return false;
+                //if there is a block on the left
+                if (mazeModel.outerGrid[(curCoor.x-1) / 4, (curCoor.y) / 4].contents[((curCoor.x-1) % 4) + (curCoor.y % 4) * 4].content == Tile.Content.Block)
                     return false;
                 curCoor += Vector2Int.left;
-                print("Move left");
+                charTransform.localEulerAngles = Vector3.up * -90;
+                //print("Move left");
                 break;
             case MazeModel.Direction.Right:
-                if (curCoor.x >= mazeModel.Column * 4 - 1)
+                //if (character is on the boundary) or (Right wall in current square is impassible)
+                //  don't move
+                if (curCoor.x >= mazeModel.Column * 4 - 1 || (curCoor.x % 4 == 3 && mazeModel.outerGrid[curCoor.x / 4, curCoor.y / 4].impassable[3]))
+                    return false;
+                //For char. who move only in the same square
+                if (restrictInTheSquare && curCoor.x % 4 == 3)
+                    return false;
+                //if there is a block in the front
+                if (mazeModel.outerGrid[(curCoor.x+1) / 4, (curCoor.y) / 4].contents[((curCoor.x+1) % 4) + (curCoor.y % 4) * 4].content == Tile.Content.Block)
                     return false;
                 curCoor += Vector2Int.right;
-                print("Move right");
+                charTransform.localEulerAngles = Vector3.up * 90;
+                //print("Move right");
                 break;
         }
         position = mazeModel.GetPosition(curCoor);
