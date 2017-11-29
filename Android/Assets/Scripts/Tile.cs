@@ -20,7 +20,7 @@ public class InnerTile
 public class Tile : MonoBehaviour{
 
     //public enum Type { Floor, OneSideWall, TwoSideWall, OneDoorOneWall, OneSideDoor, TwoSideDoor, CornerWall, DeadEnd}
-    public enum Content { Floor, Start, Exit, Pickup, Guard, Wall, BallPillarFire, SpikeTrap, FireTrap, GasTrap, CrushingWall, Catapult}
+    public enum Content { Floor, Start, Exit, Pickup, Guard, Block } //, BallPillarFire, SpikeTrap, FireTrap, GasTrap, CrushingWall, Catapult}
     public bool[] impassable; //fwd, back, right, left
     public bool isOuter;
     //public Type type = Type.Floor;
@@ -29,17 +29,17 @@ public class Tile : MonoBehaviour{
     public MazeModel.Direction facing;
     public Vector3 localPosition = Vector3.zero;
     public static Vector3[] contentPositions = {
-        new Vector3(-1.5f, 0, 1.5f),  new Vector3(-0.5f, 0, 1.5f),  new Vector3(0.5f, 0, 1.5f),  new Vector3(1.5f, 0, 1.5f),
-        new Vector3(-1.5f, 0, 0.5f),  new Vector3(-0.5f, 0, 0.5f),  new Vector3(0.5f, 0, 0.5f),  new Vector3(1.5f, 0, 0.5f),
-        new Vector3(-1.5f, 0, -0.5f), new Vector3(-0.5f, 0, -0.5f), new Vector3(0.5f, 0, -0.5f), new Vector3(1.5f, 0, -0.5f),
         new Vector3(-1.5f, 0, -1.5f), new Vector3(-0.5f, 0, -1.5f), new Vector3(0.5f, 0, -1.5f), new Vector3(1.5f, 0, -1.5f),
+        new Vector3(-1.5f, 0, -0.5f), new Vector3(-0.5f, 0, -0.5f), new Vector3(0.5f, 0, -0.5f), new Vector3(1.5f, 0, -0.5f),
+        new Vector3(-1.5f, 0, 0.5f),  new Vector3(-0.5f, 0, 0.5f),  new Vector3(0.5f, 0, 0.5f),  new Vector3(1.5f, 0, 0.5f),
+        new Vector3(-1.5f, 0, 1.5f),  new Vector3(-0.5f, 0, 1.5f),  new Vector3(0.5f, 0, 1.5f),  new Vector3(1.5f, 0, 1.5f),
     };
     //public Transform localFwd;
     //public Transform localBk;
     //public Transform localRht;
     //public Transform localLft;
 
-    public void Set(bool cantPassFwd, bool cantPassBk, bool cantPassLft, bool cantPassRht, bool isOuter)//, Content[] contents)
+    public void Set(bool cantPassFwd, bool cantPassBk, bool cantPassLft, bool cantPassRht, bool isOuter, Vector3 pos)//, Content[] contents)
     {
         impassable[0] = cantPassFwd;
         impassable[3] = cantPassRht;
@@ -47,9 +47,10 @@ public class Tile : MonoBehaviour{
         impassable[2] = cantPassLft;
         this.isOuter = isOuter;
         contents = new InnerTile[16];
+        localPosition = pos;
     }
 
-    public void CompleteRandomize(bool hasStart, bool hasExit, ref float PickupChance, ref float GuardChance, ref float WallChance) //, float BallPillarFireChance, float SpikeTrapChance, 
+    public void CompleteRandomize(bool hasStart, bool hasExit, ref float pickupChance, ref float guardChance, ref float blockChance) //, float BallPillarFireChance, float SpikeTrapChance, 
         //float FireTrapChance, float GasTrapChance, float CrushingWallChance, float CatapultChance)
     {
         List<InnerTile> unmanagedContent = new List<InnerTile>();
@@ -65,28 +66,31 @@ public class Tile : MonoBehaviour{
             unmanagedContent[unmanagedContent.Count - 1].content = Content.Start;
             unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
         }
-        else if (hasExit)
-        {
-            unmanagedContent[unmanagedContent.Count - 1].content = Content.Exit;
-            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
-        }
+        else {
+            if (hasExit)
+            {
+                unmanagedContent[unmanagedContent.Count - 1].content = Content.Exit;
+                unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+            }
 
-        if(unmanagedContent.Count>0 && Random.value> PickupChance / 100)
-        {
-            unmanagedContent[unmanagedContent.Count - 1].content = Content.Pickup;
-            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
-        }
+            if (unmanagedContent.Count > 0 && Random.value < pickupChance / 100)
+            {
+                unmanagedContent[unmanagedContent.Count - 1].content = Content.Pickup;
+                unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+            }
 
-        if (unmanagedContent.Count > 0 && Random.value > GuardChance / 100)
-        {
-            unmanagedContent[unmanagedContent.Count - 1].content = Content.Guard;
-            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+            if (unmanagedContent.Count > 0 && Random.value < guardChance / 100)
+            {
+                unmanagedContent[unmanagedContent.Count - 1].content = Content.Guard;
+                unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+            }
+            if (unmanagedContent.Count > 0 && Random.value < blockChance / 100)
+            {
+                unmanagedContent[unmanagedContent.Count - 1].content = Content.Block;
+                unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+            }
         }
-        if (unmanagedContent.Count > 0 && Random.value > WallChance / 100)
-        {
-            unmanagedContent[unmanagedContent.Count - 1].content = Content.Wall;
-            unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
-        }
+        
         //if (unmanagedContent.Count > 0 && Random.value > BallPillarFireChance / 100)
         //{
         //    unmanagedContent[unmanagedContent.Count - 1] = Content.BallPillarFire;

@@ -38,9 +38,11 @@ public class MazeModel : MonoBehaviour {
         get { return size; }
         set { size = value; }
     }
-    public Tile[,] grid;
+    public Tile[,] outerGrid;
+    //public Tile[,] innerGrid;
 
-    public Vector2Int currentCoor;
+    public float charHeight;
+    //public Vector2Int currentCoor;
     //public Vector2Int CurrentCoor
     //{
     //    get
@@ -63,8 +65,13 @@ public class MazeModel : MonoBehaviour {
         Assert.IsNull(controller, "MazeModel: Cannot reference the controller!");
     }
 
-    public Vector3 GetPosition(Vector2Int coordinate)
+    public Vector3 GetPosition(Vector2Int coord)
     {
-        return (grid[coordinate.x, coordinate.y].localPosition + Vector3.up * controller.transform.localScale.y);
+        //print(outerGrid[coord.x / 4, coord.y / 4].localPosition.x);
+        //print(Tile.contentPositions[(coord.x / 4) + (coord.y / 4) * 4].x);
+        //return new Vector3((outerGrid[coord.x/4, coord.y/4].localPosition.x) + (Tile.contentPositions[(coord.x - coord.x / 4) + (coord.y - coord.y / 4) * 4].x),
+        //    (outerGrid[coord.x / 4, coord.y / 4].localPosition.y) + (Tile.contentPositions[(coord.x - coord.x / 4) + (coord.y - coord.y / 4) * 4].y),
+        //    (outerGrid[coord.x / 4, coord.y / 4].localPosition.z) + (Tile.contentPositions[(coord.x - coord.x / 4) + (coord.y - coord.y / 4) * 4].z));
+        return transform.InverseTransformPoint(outerGrid[coord.x / 4, coord.y / 4].transform.TransformPoint(Tile.contentPositions[(coord.x % 4) + (coord.y % 4) * 4]));
     }
 }

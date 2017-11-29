@@ -34,7 +34,7 @@ public class MazeController : MonoBehaviour
         switch (direction)
         {
             case MazeModel.Direction.Forward:
-                if (curCoor.y >= mazeModel.Row - 1)
+                if (curCoor.y >= mazeModel.Row * 4 - 1)
                     return false;
                 curCoor += Vector2Int.up;
                 print("Move forward");
@@ -52,7 +52,7 @@ public class MazeController : MonoBehaviour
                 print("Move left");
                 break;
             case MazeModel.Direction.Right:
-                if (curCoor.x >= mazeModel.Column - 1)
+                if (curCoor.x >= mazeModel.Column * 4 - 1)
                     return false;
                 curCoor += Vector2Int.right;
                 print("Move right");

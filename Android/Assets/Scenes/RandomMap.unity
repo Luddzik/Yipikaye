@@ -576,8 +576,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 435138155}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.115, z: 0}
-  m_LocalScale: {x: 0.054922923, y: 0.07555958, z: 0.05492296}
+  m_LocalPosition: {x: 0, y: 0.409, z: 0}
+  m_LocalScale: {x: 0.41288862, y: 0.42079914, z: 0.4128887}
   m_Children: []
   m_Father: {fileID: 1950880393}
   m_RootOrder: 0
@@ -588,7 +588,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 435138155}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d686723831c957046aeb01f2adefc46c, type: 3}
   m_Name: 
@@ -673,7 +673,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 435138155}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 434df62846f32fc44b818ff8c3a5f3ad, type: 3}
   m_Name: 
@@ -684,6 +684,7 @@ MonoBehaviour:
   timeToTarget: 0.5
   mazeController: {fileID: 1950880395}
   mazeModel: {fileID: 1950880388}
+  currentCoor: {x: 0, y: 0}
 --- !u!1 &499360263
 GameObject:
   m_ObjectHideFlags: 0
@@ -1687,6 +1688,10 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 9529ecc3d479da5499993355e6c2cb4f, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9529ecc3d479da5499993355e6c2cb4f, type: 2}
   m_IsPrefabParent: 0
@@ -1855,12 +1860,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a168b08bb7c999c4590db06b30c88e24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pickupChance: 25.6
+  pickupChance: 31.1
   trapChance: 0
-  EnemyChance: 20.6
-  WallChance: 15.2
+  enemyChance: 50.2
+  blockChance: 71.1
   options:
-    Wall: 1
+    Block: 1
     Guard: 1
     Pickup: 1
     BallPillarFire: 0
@@ -1869,12 +1874,17 @@ MonoBehaviour:
     GasTrap: 0
     CrushingWall: 0
     Catapult: 0
-  charHeight: 0.15
+  wallChance: 50
+  charHeight: 0.53
   tileHeight: 0.01
   pathwayToExit: []
+  start: {x: 0, y: 0}
+  startPosition: {x: 0, y: 0, z: 0}
   guardPrefab: {fileID: 1852932719132232, guid: 68ee2a3414b55eb41b249f44a7a0aecf,
     type: 2}
   pickUpPrefab: {fileID: 1622566081024674, guid: 7f3beee69c1e4cb48827dfce326dcc9a,
+    type: 2}
+  blockPrefab: {fileID: 1394624007004698, guid: 535e03c15aa4af442a177d893a711a22,
     type: 2}
   startPtPrefab: {fileID: 1621841522932064, guid: 07256debe552cc14bbc4c3182fa9c3d0,
     type: 2}
@@ -1896,7 +1906,7 @@ MonoBehaviour:
   linePrefab: {fileID: 1155316172888790, guid: 877db8e5376a080438b2a5a37073f886, type: 2}
   tilesParent: {fileID: 2078217422}
   pilarsParent: {fileID: 1724996816}
-  controller: {fileID: 0}
+  controller: {fileID: 435138157}
   mazeModel: {fileID: 1950880388}
 --- !u!4 &1494161637
 Transform:
@@ -2655,7 +2665,7 @@ MonoBehaviour:
   row: 3
   column: 3
   size: 0.2
-  currentCoor: {x: 0, y: 0}
+  charHeight: 0
 --- !u!114 &1950880389
 MonoBehaviour:
   m_ObjectHideFlags: 0

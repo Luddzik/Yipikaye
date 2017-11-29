@@ -20,6 +20,7 @@ public class CapsuleController : MonoBehaviour {
     private MazeModel mazeModel;
     private float[] relAngle;
     private Vector3 joystickVector;
+    public Vector2Int currentCoor;
 
     // Use this for initialization
     void Start ()
@@ -59,19 +60,18 @@ public class CapsuleController : MonoBehaviour {
                     switch (i)
                     {
                         case (int)MazeModel.Direction.Forward:
-                            mazeController.MoveCharacter(ref mazeModel.currentCoor, MazeModel.Direction.Forward, ref targetPos);
+                            moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Forward, ref targetPos);
                             break;
-                        case (int)GridSystem.Direction.Back:
-                            mazeController.MoveCharacter(ref mazeModel.currentCoor, MazeModel.Direction.Back, ref targetPos);
+                        case (int)MazeModel.Direction.Back:
+                            moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Back, ref targetPos);
                             break;
-                        case (int)GridSystem.Direction.Right:
-                            mazeController.MoveCharacter(ref mazeModel.currentCoor, MazeModel.Direction.Right, ref targetPos);
+                        case (int)MazeModel.Direction.Right:
+                            moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Right, ref targetPos);
                             break;
-                        case (int)GridSystem.Direction.Left:
-                            mazeController.MoveCharacter(ref mazeModel.currentCoor, MazeModel.Direction.Left, ref targetPos);
+                        case (int)MazeModel.Direction.Left:
+                            moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Left, ref targetPos);
                             break;
                     }
-                    moving = true;
                     tForLerp = 0;
                     return;
                 }
