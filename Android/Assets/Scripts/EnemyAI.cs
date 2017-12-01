@@ -51,6 +51,7 @@ public class EnemyAI : MonoBehaviour {
 	void Update () {
         if (!moving)
         {
+            GetComponent<Animator>().SetInteger("Do", 0);
             switch (state)
             {
                 case State.Patrolling:
@@ -73,6 +74,7 @@ public class EnemyAI : MonoBehaviour {
         }
         else
         {
+            GetComponent<Animator>().SetInteger("Do", 1);
             tForLerp += Time.deltaTime / timeToTarget;
             transform.localPosition = Vector3.Lerp(currentPos, targetPos, tForLerp);
             if (tForLerp >= 1)

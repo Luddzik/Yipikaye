@@ -95,6 +95,7 @@ public class MazeController : MonoBehaviour
                 break;
         }
         position = mazeModel.GetPosition(curCoor);
+        position.y = charTransform.localPosition.y;
         return true;
     }
 

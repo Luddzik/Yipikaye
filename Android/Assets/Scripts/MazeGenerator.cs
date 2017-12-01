@@ -83,8 +83,8 @@ public class MazeGenerator : MonoBehaviour {
 
     private void Update()
     {
-        if (!modifying)
-            DrawGrid();
+        //if (!modifying)
+        //    DrawGrid();
     }
 
     public void SetupGrid()
@@ -106,10 +106,8 @@ public class MazeGenerator : MonoBehaviour {
         controller.transform.localScale = new Vector3(controller.transform.localScale.x * tileScale.x,
                 controller.transform.localScale.y * tileScale.y,
                 controller.transform.localScale.z * tileScale.z);
-        //Deal with scale of Pillars
-        //mazeModel.transform.GetChild(2).localScale = new Vector3(mazeModel.transform.GetChild(2).localScale.x / scaleDiff.x,
-        //        mazeModel.transform.GetChild(2).localScale.y / scaleDiff.y,
-        //        mazeModel.transform.GetChild(2).localScale.z / scaleDiff.z);
+        controller.transform.GetChild(0).GetComponent<Light>().range *= tileScale.x;
+        controller.transform.GetChild(1).GetComponent<Light>().range *= tileScale.x;
 
         //1f is the local length of the whole maze
         localsquareLengthX = 1f / mazeModel.Column;
@@ -127,15 +125,15 @@ public class MazeGenerator : MonoBehaviour {
         //ChangeStartFloorColor();
 
         //Create LineRenderers
-        for (int i = 0; i < mazeModel.Row + mazeModel.Column + 2; i++)
-        {
-            GameObject tempLine = Instantiate(linePrefab, mazeModel.transform);
-            tempLine.transform.localPosition = Vector3.zero;
-            tempLine.transform.localRotation = Quaternion.identity;
-            tempLine.name = "Line " + i;
-            tempLine.GetComponent<LineRenderer>().useWorldSpace = false;
-            m_lineRenderers.Add(tempLine.GetComponent<LineRenderer>());
-        }
+        //for (int i = 0; i < mazeModel.Row + mazeModel.Column + 2; i++)
+        //{
+        //    GameObject tempLine = Instantiate(linePrefab, mazeModel.transform);
+        //    tempLine.transform.localPosition = Vector3.zero;
+        //    tempLine.transform.localRotation = Quaternion.identity;
+        //    tempLine.name = "Line " + i;
+        //    tempLine.GetComponent<LineRenderer>().useWorldSpace = false;
+        //    m_lineRenderers.Add(tempLine.GetComponent<LineRenderer>());
+        //}
 
         modifying = false;
     }
@@ -662,7 +660,7 @@ public class MazeGenerator : MonoBehaviour {
                     temp = Instantiate(pillarPrefabs[1], pilarsParent);
                 else
                     temp = Instantiate(pillarPrefabs[2], pilarsParent);
-                temp.transform.localScale = new Vector3(tileScale.x, tileScale.z, tileScale.y);
+                temp.transform.localScale = new Vector3(tileScale.x, tileScale.y, tileScale.z);
                 temp.transform.localPosition = new Vector3(localPtZero.x + 1f / mazeModel.Column * i, tileHeight, localPtZero.z + 1f / mazeModel.Row * j);
                 if (j == mazeModel.Row && i == mazeModel.Column)
                     temp.transform.localPosition = new Vector3(localPtZero.x + 1f / mazeModel.Column * i - 0.2f * tileScale.x, tileHeight, localPtZero.z + 1f / mazeModel.Row * j - 0.2f * tileScale.z);
@@ -670,9 +668,11 @@ public class MazeGenerator : MonoBehaviour {
                     temp.transform.localPosition = new Vector3(localPtZero.x + 1f / mazeModel.Column * i - 0.2f * tileScale.x, tileHeight, localPtZero.z + 1f / mazeModel.Row * j);
                 else if (j == mazeModel.Row)
                     temp.transform.localPosition = new Vector3(localPtZero.x + 1f / mazeModel.Column * i, tileHeight, localPtZero.z + 1f / mazeModel.Row * j - 0.2f * tileScale.z);
-                if ((i==0 || i == mazeModel.Column) && j > 0 && j < mazeModel.Row)
-                    temp.transform.localEulerAngles = new Vector3(-90, 90, 0);
-
+                if ((i == 0 || i == mazeModel.Column) && j > 0 && j < mazeModel.Row)
+                {
+                    temp.transform.localEulerAngles = new Vector3(0, 90, 0);
+                    temp.transform.localScale = new Vector3(temp.transform.localScale.z, temp.transform.localScale.y, temp.transform.localScale.x);
+                }
             }
         }
     }

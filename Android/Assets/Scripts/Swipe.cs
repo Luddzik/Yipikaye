@@ -6,6 +6,15 @@ using UnityEngine.UI;
 
 public class Swipe : MonoBehaviour
 {
+    [Header("Game Balance")]
+    [SerializeField]
+    private float timeToTarget = 0.5f;
+    [SerializeField]
+    private float minSwipeDistance = 150;
+    [SerializeField]
+    private float shiningTime;
+
+    [Header("Variables")]
     private Vector2Int currentCoor;
     public Vector2Int CurrentCoor
     {
@@ -24,10 +33,10 @@ public class Swipe : MonoBehaviour
     private Vector3 currentPos;
     [SerializeField]
     private Vector3 targetPos;
-    [SerializeField]
-    private float timeToTarget = 0.5f;
     private float tForLerp;
     private bool moving;
+
+    [Header("References")]
     [SerializeField]
     private MazeController mazeController;
     [SerializeField]
@@ -35,7 +44,7 @@ public class Swipe : MonoBehaviour
     //private GridSystem gridSystem;
 
     private Vector2 m_StartPos;
-    private float minSwipeDistance = 150;
+    
     private int maxRelAngle;
     private int[] relAngle;
     //private GridSystem.Direction direction;
@@ -57,6 +66,7 @@ public class Swipe : MonoBehaviour
     {
         if (!moving)
         {
+            GetComponent<Animator>().SetInteger("Do", 0);
 #if UNITY_EDITOR
             if (Input.GetMouseButtonDown(0))
             {
@@ -216,6 +226,8 @@ public class Swipe : MonoBehaviour
         }
         else 
         {
+            GetComponent<Animator>().SetInteger("Do", 1);
+
             tForLerp += Time.deltaTime / timeToTarget;
             transform.localPosition = Vector3.Lerp(currentPos, targetPos, tForLerp);
             if(tForLerp >=1)
@@ -226,4 +238,18 @@ public class Swipe : MonoBehaviour
             }
         }
     }
+    public void UseShine()
+    {
+        StartCoroutine(Shining());
+    }
+
+    private IEnumerator Shining()
+    {
+        print("Shine!");
+        transform.GetChild(0).GetComponent<Light>().range *= 4;
+        yield return new WaitForSeconds(shiningTime);
+        transform.GetChild(0).GetComponent<Light>().range /= 4;
+    }
 }
+
+
