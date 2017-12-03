@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 9990873ba3c0a3747935c25de0c7fb19
-timeCreated: 1510923275
+guid: ce420137d11020c4ca7835b73576b1fc
+timeCreated: 1512305339
 licenseType: Pro
 ModelImporter:
   serializedVersion: 21
@@ -9,19 +9,24 @@ ModelImporter:
     100002: Cube_005
     100004: Cube_006
     100006: //RootNode
+    100008: Plane
     400000: Cube_003
     400002: Cube_005
     400004: Cube_006
     400006: //RootNode
+    400008: Plane
     2300000: Cube_003
     2300002: Cube_005
     2300004: Cube_006
+    2300006: Plane
     3300000: Cube_003
     3300002: Cube_005
     3300004: Cube_006
-    4300000: Cube_006
-    4300002: Cube_005
-    4300004: Cube_003
+    3300006: Plane
+    4300000: Plane
+    4300002: Cube_006
+    4300004: Cube_005
+    4300006: Cube_003
     7400000: Default Take
     9500000: //RootNode
   materials:
