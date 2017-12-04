@@ -13,8 +13,11 @@ public class FieldOfView : MonoBehaviour {
 
     public List<Transform> visibleTargetTransform = new List<Transform>();
 
+    private int cantFindTime;
+
     private void Start()
     {
+        cantFindTime = 0;
         StartCoroutine("FindTargetWithDelay", 0.2f);
     }
 
@@ -42,17 +45,26 @@ public class FieldOfView : MonoBehaviour {
                 {
                     visibleTargetTransform.Add(target);
                     GetComponent<EnemyAI>().state = EnemyAI.State.Pursuing;
-                    GetComponent<EnemyAI>().targetCoor = target.GetComponent<Swipe>().CurrentCoor;
+                    GetComponent<EnemyAI>().targetCoor = target.GetComponent<PlayerController>().CurrentCoor;
                 }
             }
         }
-        if(visibleTargetTransform.Count==0)
-            GetComponent<EnemyAI>().state = EnemyAI.State.Patrolling;
+        if (GetComponent<EnemyAI>().state == EnemyAI.State.Pursuing && visibleTargetTransform.Count == 0)
+        {
+            cantFindTime++;
+            if (cantFindTime > 10)
+            {
+                GetComponent<EnemyAI>().state = EnemyAI.State.Patrolling;
+                cantFindTime = 0;
+            }
+        }
     }
+
+    public float angleY;
 
 	public Vector3 DirectionFormAngle(float angleD)
     {
         angleD += transform.localEulerAngles.y;
-        return transform.TransformDirection(new Vector3(Mathf.Sin(angleD), 0, Mathf.Cos(angleD)));
+        return new Vector3(Mathf.Sin(Mathf.Deg2Rad * angleD), 0, Mathf.Cos(Mathf.Deg2Rad * angleD));
     }
 }

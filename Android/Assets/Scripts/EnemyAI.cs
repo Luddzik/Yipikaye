@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour {
 
-    public enum State { Patrolling, Pursuing};
+    public enum State { Patrolling, Pursuing, Attacking, Pointing};
     public State state = State.Patrolling;
     [SerializeField]
     private MazeModel.Direction[] patrolPattern;
@@ -47,11 +47,17 @@ public class EnemyAI : MonoBehaviour {
         moving = false;
     }
 	
+    public float dis;
+
 	// Update is called once per frame
 	void Update () {
         if (!moving)
         {
             GetComponent<Animator>().SetInteger("Do", 0);
+            if (state == State.Attacking && !GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Combo"))
+                state = State.Patrolling;
+            dis = (currentCoor - targetCoor).magnitude;
+            
             switch (state)
             {
                 case State.Patrolling:
@@ -60,7 +66,12 @@ public class EnemyAI : MonoBehaviour {
                     tForLerp = 0;
                     break;
                 case State.Pursuing:
-                    if(currentCoor.y < targetCoor.y)
+                    if ((currentCoor - targetCoor).magnitude <= 1.2f)
+                    {
+                        state = State.Attacking;
+                        GetComponent<Animator>().SetInteger("Do", 4);
+                    }
+                    else if (currentCoor.y < targetCoor.y)
                         moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                     else if (currentCoor.y > targetCoor.y)
                         moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
@@ -69,6 +80,9 @@ public class EnemyAI : MonoBehaviour {
                     else if (currentCoor.x < targetCoor.x)
                         moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                     tForLerp = 0;
+                    break;
+                case State.Attacking:
+                    //GetComponent<Animator>().SetInteger("Do", 4);
                     break;
             }
         }
@@ -82,6 +96,14 @@ public class EnemyAI : MonoBehaviour {
                 moving = false;
                 currentPos = targetPos;
             }
+        }
+    }
+
+    public void OnHittedPlayerWithSword(GameObject player)
+    {
+        if (state == State.Attacking)
+        {
+            player.GetComponent<PlayerController>().Hitted();
         }
     }
 }

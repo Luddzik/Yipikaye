@@ -14,7 +14,8 @@ public class MazeController : MonoBehaviour
 
     [SerializeField]
     private MazeGenerator mazeGen;
-
+    [SerializeField]
+    private GameObject exitScreen;
     // Use this for initialization
     void Start()
     {
@@ -34,63 +35,63 @@ public class MazeController : MonoBehaviour
         switch (direction)
         {
             case MazeModel.Direction.Forward:
+                charTransform.localEulerAngles = Vector3.zero;
                 //if (character is on the boundary) or (Forward wall in current square is impassible)
                 //  don't move
-                if (curCoor.y >= mazeModel.Row * 4 - 1 || (curCoor.y % 4 == 3 && mazeModel.outerGrid[curCoor.x/4, curCoor.y/4].impassable[0]))
+                if (curCoor.y >= mazeModel.Row * 4 - 1 || (curCoor.y % 4 == 3 && mazeModel.grid[curCoor.x/4, curCoor.y/4].impassable[0]))
                     return false;
                 //For char. who move only in the same square
                 if (restrictInTheSquare && curCoor.y % 4 == 3)
                     return false;
                 //if there is a block in the front
-                if (mazeModel.outerGrid[curCoor.x / 4, (curCoor.y + 1) / 4].contents[(curCoor.x % 4) + ((curCoor.y+1) % 4) * 4].content == Tile.Content.Block)
+                if (mazeModel.grid[curCoor.x / 4, (curCoor.y + 1) / 4].contents[(curCoor.x % 4) + ((curCoor.y+1) % 4) * 4].content == Tile.Content.Block)
                     return false;
                 curCoor += Vector2Int.up;
-                charTransform.localEulerAngles = Vector3.zero;
                 //print("Move forward");
                 break;
             case MazeModel.Direction.Back:
+                charTransform.localEulerAngles = Vector3.up * 180;
                 //if (character is on the boundary) or (Back wall in current square is impassible)
                 //  don't move
-                if (curCoor.y <= 0 || (curCoor.y % 4 == 0 && mazeModel.outerGrid[curCoor.x / 4, curCoor.y / 4].impassable[1]))
+                if (curCoor.y <= 0 || (curCoor.y % 4 == 0 && mazeModel.grid[curCoor.x / 4, curCoor.y / 4].impassable[1]))
                     return false;
                 //For char. who move only in the same square
                 if (restrictInTheSquare && curCoor.y % 4 == 0)
                     return false;
                 //if there is a block in the back
-                if (mazeModel.outerGrid[curCoor.x / 4, (curCoor.y - 1) / 4].contents[(curCoor.x % 4) + ((curCoor.y-1) % 4) * 4].content == Tile.Content.Block)
+                if (mazeModel.grid[curCoor.x / 4, (curCoor.y - 1) / 4].contents[(curCoor.x % 4) + ((curCoor.y-1) % 4) * 4].content == Tile.Content.Block)
                     return false;
                 curCoor += Vector2Int.down;
-                charTransform.localEulerAngles = Vector3.up * 180;
                 //print("Move back");
                 break;
             case MazeModel.Direction.Left:
+                charTransform.localEulerAngles = Vector3.up * -90;
                 //if (character is on the boundary) or (Left wall in current square is impassible)
                 //  don't move
-                if (curCoor.x <= 0 || (curCoor.x % 4 == 0 && mazeModel.outerGrid[curCoor.x / 4, curCoor.y / 4].impassable[2]))
+                if (curCoor.x <= 0 || (curCoor.x % 4 == 0 && mazeModel.grid[curCoor.x / 4, curCoor.y / 4].impassable[2]))
                     return false;
                 //For char. who move only in the same square
                 if (restrictInTheSquare && curCoor.x % 4 == 0)
                     return false;
                 //if there is a block on the left
-                if (mazeModel.outerGrid[(curCoor.x-1) / 4, (curCoor.y) / 4].contents[((curCoor.x-1) % 4) + (curCoor.y % 4) * 4].content == Tile.Content.Block)
+                if (mazeModel.grid[(curCoor.x-1) / 4, (curCoor.y) / 4].contents[((curCoor.x-1) % 4) + (curCoor.y % 4) * 4].content == Tile.Content.Block)
                     return false;
                 curCoor += Vector2Int.left;
-                charTransform.localEulerAngles = Vector3.up * -90;
                 //print("Move left");
                 break;
             case MazeModel.Direction.Right:
+                charTransform.localEulerAngles = Vector3.up * 90;
                 //if (character is on the boundary) or (Right wall in current square is impassible)
                 //  don't move
-                if (curCoor.x >= mazeModel.Column * 4 - 1 || (curCoor.x % 4 == 3 && mazeModel.outerGrid[curCoor.x / 4, curCoor.y / 4].impassable[3]))
+                if (curCoor.x >= mazeModel.Column * 4 - 1 || (curCoor.x % 4 == 3 && mazeModel.grid[curCoor.x / 4, curCoor.y / 4].impassable[3]))
                     return false;
                 //For char. who move only in the same square
                 if (restrictInTheSquare && curCoor.x % 4 == 3)
                     return false;
                 //if there is a block in the front
-                if (mazeModel.outerGrid[(curCoor.x+1) / 4, (curCoor.y) / 4].contents[((curCoor.x+1) % 4) + (curCoor.y % 4) * 4].content == Tile.Content.Block)
+                if (mazeModel.grid[(curCoor.x+1) / 4, (curCoor.y) / 4].contents[((curCoor.x+1) % 4) + (curCoor.y % 4) * 4].content == Tile.Content.Block)
                     return false;
                 curCoor += Vector2Int.right;
-                charTransform.localEulerAngles = Vector3.up * 90;
                 //print("Move right");
                 break;
         }
@@ -111,18 +112,15 @@ public class MazeController : MonoBehaviour
         mazeGen.SetupGrid();
     }
 
-    public void ChangeSize(float size)
+    public void ChangeSize(float change)
     {
-        mazeModel.Size = size;
+        transform.localScale *= change;
+        transform.GetChild(0).GetChild(0).GetComponent<Light>().range *= change;
+        transform.GetChild(0).GetChild(1).GetComponent<Light>().range *= change;
+    }
 
-        Vector3 newScale = new Vector3(size * mazeModel.Column, transform.localScale.y, size * mazeModel.Row);
-        Vector3 scaleDiff = new Vector3(newScale.x / transform.localScale.x,
-            0,
-            newScale.z / transform.localScale.z);
-
-        transform.localScale = newScale;
-        transform.GetChild(0).localScale = new Vector3(transform.GetChild(0).localScale.x / scaleDiff.x,
-                transform.GetChild(0).localScale.y,
-                transform.GetChild(0).localScale.z / scaleDiff.z);
+    public void OnExitEnter()
+    {
+        exitScreen.SetActive(true);
     }
 }

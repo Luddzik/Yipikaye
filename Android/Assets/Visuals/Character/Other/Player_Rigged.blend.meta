@@ -1,0 +1,222 @@
+fileFormatVersion: 2
+guid: 0580d14a587965b488952f43b1aed6cb
+timeCreated: 1512131748
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: Armlet
+    100002: ArmletHolder
+    100004: Belt
+    100006: BlindFold
+    100008: chest
+    100010: f_middle_01_L
+    100012: f_middle_01_R
+    100014: FeetBase
+    100016: foot_L
+    100018: foot_R
+    100020: forearm_L
+    100022: forearm_R
+    100024: Forehead_Plate
+    100026: ForeheadBand
+    100028: Gem
+    100030: Gloves
+    100032: hand_L
+    100034: hand_R
+    100036: Head
+    100038: head
+    100040: heel_02_L
+    100042: heel_02_R
+    100044: heel_L
+    100046: heel_R
+    100048: hips
+    100050: Hood
+    100052: LegStrips
+    100054: Mask
+    100056: metarig
+    100058: neck
+    100060: palm_02_L
+    100062: palm_02_R
+    100064: //RootNode
+    100066: Scarf
+    100068: shin_L
+    100070: shin_R
+    100072: Shoes
+    100074: shoulder_L
+    100076: shoulder_R
+    100078: spine
+    100080: Suit
+    100082: thigh_L
+    100084: thigh_R
+    100086: ThighsStrip
+    100088: thumb_01_L
+    100090: thumb_01_R
+    100092: thumb_02_L
+    100094: thumb_02_R
+    100096: toe_L
+    100098: toe_R
+    100100: upper_arm_L
+    100102: upper_arm_R
+    400000: Armlet
+    400002: ArmletHolder
+    400004: Belt
+    400006: BlindFold
+    400008: chest
+    400010: f_middle_01_L
+    400012: f_middle_01_R
+    400014: FeetBase
+    400016: foot_L
+    400018: foot_R
+    400020: forearm_L
+    400022: forearm_R
+    400024: Forehead_Plate
+    400026: ForeheadBand
+    400028: Gem
+    400030: Gloves
+    400032: hand_L
+    400034: hand_R
+    400036: Head
+    400038: head
+    400040: heel_02_L
+    400042: heel_02_R
+    400044: heel_L
+    400046: heel_R
+    400048: hips
+    400050: Hood
+    400052: LegStrips
+    400054: Mask
+    400056: metarig
+    400058: neck
+    400060: palm_02_L
+    400062: palm_02_R
+    400064: //RootNode
+    400066: Scarf
+    400068: shin_L
+    400070: shin_R
+    400072: Shoes
+    400074: shoulder_L
+    400076: shoulder_R
+    400078: spine
+    400080: Suit
+    400082: thigh_L
+    400084: thigh_R
+    400086: ThighsStrip
+    400088: thumb_01_L
+    400090: thumb_01_R
+    400092: thumb_02_L
+    400094: thumb_02_R
+    400096: toe_L
+    400098: toe_R
+    400100: upper_arm_L
+    400102: upper_arm_R
+    4300000: Shoes
+    4300002: FeetBase
+    4300004: Gloves
+    4300006: BlindFold
+    4300008: ThighsStrip
+    4300010: Belt
+    4300012: LegStrips
+    4300014: Suit
+    4300016: Gem
+    4300018: ArmletHolder
+    4300020: Armlet
+    4300022: Scarf
+    4300024: Mask
+    4300026: Forehead_Plate
+    4300028: ForeheadBand
+    4300030: Hood
+    4300032: Head
+    7400000: Default Take
+    9500000: //RootNode
+    13700000: Armlet
+    13700002: ArmletHolder
+    13700004: Belt
+    13700006: BlindFold
+    13700008: FeetBase
+    13700010: Forehead_Plate
+    13700012: ForeheadBand
+    13700014: Gem
+    13700016: Gloves
+    13700018: Head
+    13700020: Hood
+    13700022: LegStrips
+    13700024: Mask
+    13700026: Scarf
+    13700028: Shoes
+    13700030: Suit
+    13700032: ThighsStrip
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

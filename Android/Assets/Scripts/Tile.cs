@@ -20,12 +20,13 @@ public class InnerTile
 public class Tile : MonoBehaviour{
 
     //public enum Type { Floor, OneSideWall, TwoSideWall, OneDoorOneWall, OneSideDoor, TwoSideDoor, CornerWall, DeadEnd}
-    public enum Content { Floor, Start, Exit, Pickup, Guard, Block } //, BallPillarFire, SpikeTrap, FireTrap, GasTrap, CrushingWall, Catapult}
+    public enum Content { Floor, Start, Exit, HealthPickup, AbilityPickup, Guard, Block } //, BallPillarFire, SpikeTrap, FireTrap, GasTrap, CrushingWall, Catapult}
     public bool[] impassable; //fwd, back, right, left
     public bool isOuter;
+    public bool hasStart;
     //public Type type = Type.Floor;
     public InnerTile[] contents;
-
+    public GameObject[] walls;
     public MazeModel.Direction facing;
     public Vector3 localPosition = Vector3.zero;
     public static Vector3[] contentPositions = {
@@ -50,7 +51,7 @@ public class Tile : MonoBehaviour{
         localPosition = pos;
     }
 
-    public void CompleteRandomize(bool hasStart, bool hasExit, ref float pickupChance, ref float guardChance, ref float blockChance) //, float BallPillarFireChance, float SpikeTrapChance, 
+    public void CompleteRandomize(bool hasStart, bool hasExit, ref float healthPickupChance, ref float abilityPickupChance, ref float guardChance, ref float blockChance) //, float BallPillarFireChance, float SpikeTrapChance, 
         //float FireTrapChance, float GasTrapChance, float CrushingWallChance, float CatapultChance)
     {
         List<InnerTile> unmanagedContent = new List<InnerTile>();
@@ -73,9 +74,14 @@ public class Tile : MonoBehaviour{
                 unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
             }
 
-            if (unmanagedContent.Count > 0 && Random.value < pickupChance / 100)
+            if (unmanagedContent.Count > 0 && Random.value < healthPickupChance / 100)
             {
-                unmanagedContent[unmanagedContent.Count - 1].content = Content.Pickup;
+                unmanagedContent[unmanagedContent.Count - 1].content = Content.HealthPickup;
+                unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+            }
+            if (unmanagedContent.Count > 0 && Random.value < abilityPickupChance / 100)
+            {
+                unmanagedContent[unmanagedContent.Count - 1].content = Content.AbilityPickup;
                 unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
             }
 

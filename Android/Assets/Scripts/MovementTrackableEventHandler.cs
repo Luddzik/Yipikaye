@@ -77,7 +77,7 @@ public class MovementTrackableEventHandler : MonoBehaviour, ITrackableEventHandl
             component.enabled = true;
 
         // Enable gravity:
-        transform.GetChild(0).GetComponent<GravityPull>().enabled = true;
+        //transform.GetChild(0).GetComponent<GravityPull>().enabled = true;
 
         // Setup grid:
         //transform.GetChild(0).GetComponent<GridSystem>().SetupGrid();
