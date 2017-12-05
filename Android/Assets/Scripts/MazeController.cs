@@ -12,12 +12,13 @@ public class MazeController : MonoBehaviour
     //private float localsquareLengthY;
     
 
-    [SerializeField]
-    private MazeGenerator mazeGen;
-    [SerializeField]
-    private GameObject exitScreen;
-    [SerializeField]
-    private GameObject deadScreen;
+    [SerializeField] private MazeGenerator mazeGen;
+    [SerializeField] private GameObject exitScreen;
+    [SerializeField] private GameObject deadScreen;
+    [SerializeField] private LightManager lightManager;
+    [SerializeField] private List<GameObject> enemies = new List<GameObject>();
+    [SerializeField] private GameObject winCam;
+
     // Use this for initialization
     void Start()
     {
@@ -117,17 +118,35 @@ public class MazeController : MonoBehaviour
     public void ChangeSize(float change)
     {
         transform.localScale *= change;
-        transform.GetChild(0).GetChild(0).GetComponent<Light>().range *= change;
-        transform.GetChild(0).GetChild(1).GetComponent<Light>().range *= change;
+        //transform.GetChild(0).GetChild(0).GetComponent<Light>().range *= change;
+        //transform.GetChild(0).GetChild(1).GetComponent<Light>().range *= change;
+
+        lightManager.Resize(change);
+    }
+
+    public void AddEnemy(GameObject enemy)
+    {
+        enemies.Add(enemy);
     }
 
     public void OnExitEnter()
     {
-        exitScreen.SetActive(true);
+        //exitScreen.SetActive(true);
+        for (int i = 0; i < enemies.Count; i++)
+            Destroy(enemies[i]);
+        //Camera.main.gameObject.SetActive(false);
+        //winCam.SetActive(false); ;
+        Invoke("CallChangeSceneToWin", 8);
+    }
+
+    public void CallChangeSceneToWin()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("WinScreen", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 
     public void OnDeath()
     {
-        deadScreen.SetActive(true);
+        //deadScreen.SetActive(true);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 }

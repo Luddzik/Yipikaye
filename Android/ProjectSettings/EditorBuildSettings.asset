@@ -6,11 +6,26 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Menu.unity
+    path: Assets/Scenes/MainScreen.unity
+    guid: 4c6e30ad1a65d455c9c41392478f7837
+  - enabled: 1
+    path: Assets/Scenes/RandomMap.unity
+    guid: 25ca5752e9849774b88076fca9377ee1
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: b2e6570547f8f450c99d101d09555fa0
+  - enabled: 1
+    path: Assets/Scenes/WinScreen.unity
+    guid: a346b45c62a6e491aa56cff82ff2c942
+  - enabled: 0
+    path: Assets/Scenes/Test/Menu.unity
     guid: 56b6b1d4451441d41b58a1bd4816f9c1
-  - enabled: 1
-    path: Assets/Scenes/JoyStick.unity
+  - enabled: 0
+    path: Assets/Scenes/Test/JoyStick.unity
     guid: 909ba74d2b90bca488dee194590bc8ef
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Swipe.unity
     guid: 04e17829d382733479e525ef7090ba93
+  - enabled: 0
+    path: Assets/Scenes/Options.unity
+    guid: 87239ae8f5c7548c29681542e6e17abf

@@ -1547,11 +1547,13 @@ MonoBehaviour:
   timeToTarget: 0.5
   minSwipeDistance: 150
   shiningTime: 4
+  shineChakraCost: 1
   currentCoor: {x: 0, y: 0}
   currentPos: {x: 0, y: 0, z: 0}
   targetPos: {x: 0, y: 0, z: 0}
   dead: 0
   canPushEntrance: 0
+  gameScreen: {fileID: 0}
   mazeController: {fileID: 0}
   mazeModel: {fileID: 0}
   healthTxt: {fileID: 0}

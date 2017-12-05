@@ -7,20 +7,15 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     [Header("Game Balance")]
-    [SerializeField]
-    private int health;
-    [SerializeField]
-    private int chakra;
-    [SerializeField]
-    private float timeToTarget = 0.5f;
-    [SerializeField]
-    private float minSwipeDistance = 150;
-    [SerializeField]
-    private float shiningTime;
+    [SerializeField] private int health;
+    [SerializeField] private int chakra;
+    [SerializeField] private float timeToTarget = 0.5f;
+    [SerializeField] private float minSwipeDistance = 150;
+    [SerializeField] private float shiningTime;
+    [SerializeField] private int shineChakraCost;
 
     [Header("Variables")]
-    [SerializeField]
-    private Vector2Int currentCoor;
+    [SerializeField] private Vector2Int currentCoor;
     public Vector2Int CurrentCoor
     {
         get
@@ -34,30 +29,22 @@ public class PlayerController : MonoBehaviour
             targetPos = currentPos;
         }
     }
-    [SerializeField]
-    private Vector3 currentPos;
-    [SerializeField]
-    private Vector3 targetPos;
+    [SerializeField] private Vector3 currentPos;
+    [SerializeField] private Vector3 targetPos;
     private float tForLerp;
     private bool moving;
-    [SerializeField]
-    private bool dead;
-    [SerializeField]
-    private bool canPushEntrance;
+    [SerializeField] private bool dead;
+    [SerializeField] private bool canPushEntrance;
 
     [Header("References")]
-    [SerializeField]
-    private MazeController mazeController;
-    [SerializeField]
-    private MazeModel mazeModel;
-    [SerializeField]
-    private Text healthTxt;
-    [SerializeField]
-    private Text chakraTxt;
+    [SerializeField] private GameScreen gameScreen;
+    [SerializeField] private MazeController mazeController;
+    [SerializeField] private MazeModel mazeModel;
+    [SerializeField] private Text healthTxt;
+    [SerializeField] private Text chakraTxt;
     private Animator animator;
     private Animator entranceAnimator;
-    [SerializeField]
-    private AudioSource playerFeet;
+    [SerializeField] private AudioSource playerFeet;
     private Vector2 m_StartPos;
 
     private int maxRelAngle;
@@ -212,41 +199,37 @@ public class PlayerController : MonoBehaviour
 
                             maxRelAngle = Mathf.Min(relAngle[0], relAngle[1], relAngle[2], relAngle[3]);
 
-                            if (maxRelAngle == relAngle[0])
+                             if (maxRelAngle == relAngle[0])
                             {
+                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                                 if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Forward)
                                 {
                                     OpenTheDoor();
                                 }
-                                else
-                                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                             }
                             else if (maxRelAngle == relAngle[1])
                             {
+                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
                                 if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Back)
                                 {
                                     OpenTheDoor();
                                 }
-                                else
-                                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
                             }
                             else if (maxRelAngle == relAngle[2])
                             {
+                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
                                 if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Left)
                                 {
                                     OpenTheDoor();
                                 }
-                                else
-                                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
                             }
                             else if (maxRelAngle == relAngle[3])
                             {
+                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                                 if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Right)
                                 {
                                     OpenTheDoor();
                                 }
-                                else
-                                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                             }
                             else
                                 return;
@@ -307,7 +290,8 @@ public class PlayerController : MonoBehaviour
     public void Hitted()
     {
         health--;
-        healthTxt.text = "Health: " + health;
+        //healthTxt.text = "Health: " + health;
+        gameScreen.ReduceHealth(1);
         if (health <= 0)
         {
             print("Dead...");
@@ -324,10 +308,11 @@ public class PlayerController : MonoBehaviour
 
     public void UseShine()
     {
-        chakra--;
+        chakra -= shineChakraCost;
         if (chakra > 0)
         {
-            chakraTxt.text = "Chakra: " + chakra;
+            //chakraTxt.text = "Chakra: " + chakra;
+            gameScreen.ReduceChakra(shineChakraCost);
             StartCoroutine(Shining());
         }
     }
@@ -335,13 +320,15 @@ public class PlayerController : MonoBehaviour
     public void GetHeart()
     {
         health++;
-        healthTxt.text = "Health: " + health;
+        gameScreen.AddHealth();
+        //healthTxt.text = "Health: " + health;
     }
 
     public void GetScroll()
     {
         chakra++;
-        chakraTxt.text = "Chakra: " + chakra;
+        gameScreen.AddChakra();
+        //chakraTxt.text = "Chakra: " + chakra;
     }
 
     private IEnumerator Shining()
@@ -357,7 +344,9 @@ public class PlayerController : MonoBehaviour
         animator.SetInteger("Do", 3);
         entranceAnimator.enabled = true;
         canPushEntrance = false;
-        Invoke("CallOnExitEnter", 5);
+        mazeController.OnExitEnter();
+        //mazeController.DestroyAllEnemies();
+        //Invoke("CallOnExitEnter", 5);
     }
 
     private void CallOnExitEnter()

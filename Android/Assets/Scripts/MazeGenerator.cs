@@ -59,11 +59,10 @@ public class MazeGenerator : MonoBehaviour {
     [Header("Reference")]
     public Transform tilesParent;
     public Transform pilarsParent;
-    [SerializeField]
-    private PlayerController controller;
+    [SerializeField] private PlayerController controller;
     //private CapsuleController controller;
-    [SerializeField]
-    private MazeModel mazeModel;
+    [SerializeField] private MazeModel mazeModel;
+    [SerializeField] private LightManager lightManager;
 
 
     private void Awake()
@@ -84,6 +83,9 @@ public class MazeGenerator : MonoBehaviour {
             Tile.contentPositions[i].y = charHeight;
 
         m_lineRenderers = new List<LineRenderer>();
+        lightManager.AddLight(controller.transform.GetChild(0).GetComponent<Light>());
+        lightManager.AddLight(controller.transform.GetChild(1).GetComponent<Light>());
+
         SetupGrid();
     }
 
@@ -112,8 +114,9 @@ public class MazeGenerator : MonoBehaviour {
         controller.transform.localScale = new Vector3(controller.transform.localScale.x * tileScale.x,
                 controller.transform.localScale.y * tileScale.y,
                 controller.transform.localScale.z * tileScale.z);
-        controller.transform.GetChild(0).GetComponent<Light>().range *= tileScale.x;
-        controller.transform.GetChild(1).GetComponent<Light>().range *= tileScale.x;
+
+        //controller.transform.GetChild(0).GetComponent<Light>().range *= tileScale.x;
+        //controller.transform.GetChild(1).GetComponent<Light>().range *= tileScale.x;
 
         //1f is the local length of the whole maze
         localsquareLengthX = 1f / mazeModel.Column;
@@ -125,6 +128,8 @@ public class MazeGenerator : MonoBehaviour {
         InstantiatePillars();
 
         InstantiateOuterCorner();
+
+        lightManager.Resize(tileScale.x);
 
         //controller.transform.position = startPosition;
 
@@ -305,6 +310,7 @@ public class MazeGenerator : MonoBehaviour {
                     tempContent.GetComponent<EnemyAI>().mazeModel = mazeModel;
                     tempContent.GetComponent<EnemyAI>().CurrentCoor = new Vector2Int(i * 4 + k % 4, j * 4 + k / 4);
                     tempContent.name = "Guard " + i+", " + j;
+                    mazeModel.GetComponent<MazeController>().AddEnemy(tempContent);
                     break;
                 case Tile.Content.Block:
                     tempContent = Instantiate(blockPrefab, mazeModel.transform.GetChild(1)); //mazeModel.outerGrid[i, j].transform);
@@ -714,7 +720,9 @@ public class MazeGenerator : MonoBehaviour {
             Destroy(mazeModel.grid[x, y].walls[1]);
             mazeModel.grid[x, y].walls[1] = Instantiate(mainEntrancePrefab, mazeModel.grid[x, y].transform);
             mazeModel.grid[x, y].walls[1].transform.localEulerAngles = new Vector3(0, 180, 0);
+            lightManager.AddLight(mazeModel.grid[x, y].walls[1].transform.GetChild(0).GetComponent<Light>());
             mazeModel.mainEntranceFacing = MazeModel.Direction.Back;
+            lightManager.AddLight(mazeModel.grid[x, y].walls[1].transform.GetChild(1).GetComponent<Light>());
         }
         else if (mainEntranceCWOrder < mazeModel.Column + mazeModel.Row) //Toward x
         {
@@ -725,6 +733,8 @@ public class MazeGenerator : MonoBehaviour {
             mazeModel.grid[x, y].walls[3] = Instantiate(mainEntrancePrefab, mazeModel.grid[x, y].transform);
             mazeModel.grid[x, y].walls[3].transform.localEulerAngles = new Vector3(0, 90, 0);
             mazeModel.mainEntranceFacing = MazeModel.Direction.Right;
+            lightManager.AddLight(mazeModel.grid[x, y].walls[3].transform.GetChild(0).GetComponent<Light>());
+            lightManager.AddLight(mazeModel.grid[x, y].walls[3].transform.GetChild(1).GetComponent<Light>());
         }
         else if (mainEntranceCWOrder < mazeModel.Column * 2 + mazeModel.Row) //Toward z
         {
@@ -735,6 +745,8 @@ public class MazeGenerator : MonoBehaviour {
             Destroy(mazeModel.grid[x, y].walls[0]);
             mazeModel.grid[x, y].walls[0] = Instantiate(mainEntrancePrefab, mazeModel.grid[x, y].transform);
             mazeModel.mainEntranceFacing = MazeModel.Direction.Forward;
+            lightManager.AddLight(mazeModel.grid[x, y].walls[0].transform.GetChild(0).GetComponent<Light>());
+            lightManager.AddLight(mazeModel.grid[x, y].walls[0].transform.GetChild(1).GetComponent<Light>());
         }
         else if (mainEntranceCWOrder < mazeModel.Column * 2 + mazeModel.Row * 2) //Toward -x
         {
@@ -746,6 +758,8 @@ public class MazeGenerator : MonoBehaviour {
             mazeModel.grid[x, y].walls[2] = Instantiate(mainEntrancePrefab, mazeModel.grid[x, y].transform);
             mazeModel.grid[x, y].walls[2].transform.localEulerAngles = new Vector3(0, -90, 0);
             mazeModel.mainEntranceFacing = MazeModel.Direction.Left;
+            lightManager.AddLight(mazeModel.grid[x, y].walls[2].transform.GetChild(0).GetComponent<Light>());
+            lightManager.AddLight(mazeModel.grid[x, y].walls[2].transform.GetChild(1).GetComponent<Light>());
         }
     }
 
@@ -785,19 +799,22 @@ public class MazeGenerator : MonoBehaviour {
         temp = Instantiate(cornerPrefab, pilarsParent); //right-top corner
         temp.transform.localPosition = new Vector3(0.5f, tileHeight, 0.5f);
         temp.transform.localScale = tileScale;
+        lightManager.AddLight(temp.transform.GetChild(0).GetComponent<Light>());
         temp = Instantiate(cornerPrefab, pilarsParent);  //left-top corner
         temp.transform.localPosition = new Vector3(-0.5f, tileHeight, 0.5f);
         temp.transform.localEulerAngles = Vector3.up * -90;
         temp.transform.localScale = new Vector3(tileScale.z, tileScale.y, tileScale.x);
+        lightManager.AddLight(temp.transform.GetChild(0).GetComponent<Light>());
         temp = Instantiate(cornerPrefab, pilarsParent); //right-bottom corner
         temp.transform.localPosition = new Vector3(0.5f, tileHeight, -0.5f);
         temp.transform.localEulerAngles = Vector3.up * 90;
         temp.transform.localScale = new Vector3(tileScale.z, tileScale.y, tileScale.x);
+        lightManager.AddLight(temp.transform.GetChild(0).GetComponent<Light>());
         temp = Instantiate(cornerPrefab, pilarsParent);  //left-bottom corner
         temp.transform.localPosition = new Vector3(-0.5f, tileHeight, -0.5f);
         temp.transform.localEulerAngles = Vector3.up * 180;
         temp.transform.localScale = tileScale;
-
+        lightManager.AddLight(temp.transform.GetChild(0).GetComponent<Light>());
     }
 
     private void DrawGrid()

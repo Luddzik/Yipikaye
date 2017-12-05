@@ -1371,7 +1371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ff72013bbf79a444a57ae565e9bab16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToGiveUpPursuingWhenHidden: 0
+  timeToGiveUpPursuingWhenHidden: 5
   state: 0
   patrolPattern: 0300000003000000000000000000000002000000020000000100000001000000
   targetCoor: {x: 0, y: 0}
