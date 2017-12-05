@@ -5,19 +5,19 @@ using UnityEngine.UI;
 
 public class HealthManager : MonoBehaviour {
 
-    [SerializeField] private int startHealth = 3;
+    [SerializeField] private int startHealth = 1;
     [SerializeField] private int curHealth;
     [SerializeField] private Image[] healthImage; //location in the canvas
     [SerializeField] private Sprite[] healthSprite; //empty (0) and full (1)
 
     private int maxHealthAmount = 5;
-    private int maxHealth;
+    //private int maxHealth;
     private int healthPerHeart = 1;
 
 	void Start () 
     {
         curHealth = startHealth;
-        maxHealth = maxHealthAmount;
+        //maxHealth = maxHealthAmount;
         checkHealthAmount();
 	}
 	
@@ -25,7 +25,7 @@ public class HealthManager : MonoBehaviour {
     {
         for (int i = 0; i < maxHealthAmount; i++)
         {
-            if (startHealth <= i)
+            if (curHealth <= i)
             {
                 healthImage[i].enabled = false;
             }
@@ -70,14 +70,18 @@ public class HealthManager : MonoBehaviour {
     public void TakeDamage(int amount)
     {
         curHealth += amount;
-        curHealth = Mathf.Clamp(curHealth, 0, startHealth);
+        curHealth = Mathf.Clamp(curHealth, 0, maxHealthAmount);
+        if (curHealth <= 0)
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        }
         UpdateHealth();
     }
 
-    public void AddHealthContainer()
+    public void AddHealth()
     {
-        startHealth++;
-        startHealth = Mathf.Clamp(startHealth, 0, maxHealthAmount);
+        curHealth++;
+        curHealth = Mathf.Clamp(curHealth, 0, maxHealthAmount);
 
         checkHealthAmount();
     }
