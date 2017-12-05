@@ -54,8 +54,8 @@ public class EnemyAI : MonoBehaviour {
         if (!moving)
         {
             GetComponent<Animator>().SetInteger("Do", 0);
-            if (state == State.Attacking && !GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Combo"))
-                state = State.Patrolling;
+            //if (state == State.Attacking && !GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Combo"))
+            //    state = State.Patrolling;
             dis = (currentCoor - targetCoor).magnitude;
             
             switch (state)
@@ -66,12 +66,12 @@ public class EnemyAI : MonoBehaviour {
                     tForLerp = 0;
                     break;
                 case State.Pursuing:
-                    if ((currentCoor - targetCoor).magnitude <= 1.2f)
-                    {
-                        state = State.Attacking;
-                        GetComponent<Animator>().SetInteger("Do", 4);
-                    }
-                    else if (currentCoor.y < targetCoor.y)
+                    //if ((currentCoor - targetCoor).magnitude <= 1)
+                    //{
+                    //    state = State.Attacking;
+                    //    GetComponent<Animator>().SetInteger("Do", 4);
+                    //}
+                    if (currentCoor.y < targetCoor.y)
                         moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                     else if (currentCoor.y > targetCoor.y)
                         moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);

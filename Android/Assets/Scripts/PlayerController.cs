@@ -41,6 +41,8 @@ public class PlayerController : MonoBehaviour
     private float tForLerp;
     private bool moving;
     [SerializeField]
+    private bool dead;
+    [SerializeField]
     private bool canPushEntrance;
 
     [Header("References")]
@@ -69,6 +71,7 @@ public class PlayerController : MonoBehaviour
         tForLerp = 0;
         moving = false;
         canPushEntrance = false;
+        dead = false;
         chakraTxt.text = "Chakra: " + chakra;
         healthTxt.text = "Health: " + health;
         animator = GetComponent<Animator>();
@@ -80,218 +83,221 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (!moving)
+        if (!dead)
         {
-            animator.SetInteger("Do", 0);
+            if (!moving)
+            {
+                animator.SetInteger("Do", 0);
 #if UNITY_EDITOR
-            if (Input.GetMouseButtonDown(0))
-            {
-                m_StartPos = Input.mousePosition;
-            }
-            if (Input.GetMouseButtonUp(0))
-            {
-                Vector3 swipeVector = new Vector3(Input.mousePosition.x - m_StartPos.x, 0, Input.mousePosition.y - m_StartPos.y);
-
-                if (swipeVector.magnitude < minSwipeDistance)
-                    return;
-
-                swipeVector = Camera.main.transform.TransformDirection(swipeVector.normalized);
-                swipeVector = Vector3.ProjectOnPlane(swipeVector, transform.parent.up).normalized;
-
-                relAngle[0] = (int)Vector3.Angle(swipeVector, transform.parent.forward);
-                relAngle[1] = (int)Vector3.Angle(swipeVector, -transform.parent.forward);
-                relAngle[2] = (int)Vector3.Angle(swipeVector, -transform.parent.right);
-                relAngle[3] = (int)Vector3.Angle(swipeVector, transform.parent.right);
-
-                maxRelAngle = Mathf.Min(relAngle[0], relAngle[1], relAngle[2], relAngle[3]);
-
-                if (maxRelAngle == relAngle[0])
+                if (Input.GetMouseButtonDown(0))
                 {
-                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
-                    if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Forward)
-                    {
-                        OpenTheDoor();
-                    }
+                    m_StartPos = Input.mousePosition;
                 }
-                else if (maxRelAngle == relAngle[1])
+                if (Input.GetMouseButtonUp(0))
                 {
-                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
-                    if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Back)
-                    {
-                        OpenTheDoor();
-                    }
-                }
-                else if (maxRelAngle == relAngle[2])
-                {
-                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
-                    if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Left)
-                    {
-                        OpenTheDoor();
-                    }
-                }
-                else if (maxRelAngle == relAngle[3])
-                {
-                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
-                    if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Right)
-                    {
-                        OpenTheDoor();
-                    }
-                }
-                else
-                    return;
+                    Vector3 swipeVector = new Vector3(Input.mousePosition.x - m_StartPos.x, 0, Input.mousePosition.y - m_StartPos.y);
 
-                tForLerp = 0;
+                    if (swipeVector.magnitude < minSwipeDistance)
+                        return;
 
-                //for (int i = 0; i < relAngle.Length; i++)
-                //{
-                //    bool bigger = false;
-                //    for (int j = 0; j < relAngle.Length; j++)
-                //    {
-                //        if (relAngle[i] > relAngle[j])
-                //            bigger = true;
-                //    }
-                //    if (!bigger)
-                //    {
-                //        switch (i)
-                //        {
-                //            case (int)MazeModel.Direction.Forward:
-                //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Forward, ref targetPos);
-                //                break;
-                //            case (int)GridSystem.Direction.Back:
-                //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Back, ref targetPos);
-                //                break;
-                //            case (int)GridSystem.Direction.Right:
-                //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Right, ref targetPos);
-                //                break;
-                //            case (int)GridSystem.Direction.Left:
-                //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Left, ref targetPos);
-                //                break;
-                //        }
-                //        tForLerp = 0;
-                //        return;
-                //    }
-                //}
-            }
+                    swipeVector = Camera.main.transform.TransformDirection(swipeVector.normalized);
+                    swipeVector = Vector3.ProjectOnPlane(swipeVector, transform.parent.up).normalized;
+
+                    relAngle[0] = (int)Vector3.Angle(swipeVector, transform.parent.forward);
+                    relAngle[1] = (int)Vector3.Angle(swipeVector, -transform.parent.forward);
+                    relAngle[2] = (int)Vector3.Angle(swipeVector, -transform.parent.right);
+                    relAngle[3] = (int)Vector3.Angle(swipeVector, transform.parent.right);
+
+                    maxRelAngle = Mathf.Min(relAngle[0], relAngle[1], relAngle[2], relAngle[3]);
+
+                    if (maxRelAngle == relAngle[0])
+                    {
+                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
+                        if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Forward)
+                        {
+                            OpenTheDoor();
+                        }
+                    }
+                    else if (maxRelAngle == relAngle[1])
+                    {
+                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
+                        if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Back)
+                        {
+                            OpenTheDoor();
+                        }
+                    }
+                    else if (maxRelAngle == relAngle[2])
+                    {
+                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
+                        if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Left)
+                        {
+                            OpenTheDoor();
+                        }
+                    }
+                    else if (maxRelAngle == relAngle[3])
+                    {
+                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
+                        if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Right)
+                        {
+                            OpenTheDoor();
+                        }
+                    }
+                    else
+                        return;
+
+                    tForLerp = 0;
+
+                    //for (int i = 0; i < relAngle.Length; i++)
+                    //{
+                    //    bool bigger = false;
+                    //    for (int j = 0; j < relAngle.Length; j++)
+                    //    {
+                    //        if (relAngle[i] > relAngle[j])
+                    //            bigger = true;
+                    //    }
+                    //    if (!bigger)
+                    //    {
+                    //        switch (i)
+                    //        {
+                    //            case (int)MazeModel.Direction.Forward:
+                    //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Forward, ref targetPos);
+                    //                break;
+                    //            case (int)GridSystem.Direction.Back:
+                    //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Back, ref targetPos);
+                    //                break;
+                    //            case (int)GridSystem.Direction.Right:
+                    //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Right, ref targetPos);
+                    //                break;
+                    //            case (int)GridSystem.Direction.Left:
+                    //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Left, ref targetPos);
+                    //                break;
+                    //        }
+                    //        tForLerp = 0;
+                    //        return;
+                    //    }
+                    //}
+                }
 #endif
-            //debugText1.text = Camera.main.transform.position+"";
-            //debugText2.text = target.transform.position+"";
+                //debugText1.text = Camera.main.transform.position+"";
+                //debugText2.text = target.transform.position+"";
 #if UNITY_ANDROID
-            if (Input.touchCount > 0)
-            {
-                Touch touch = Input.touches[0];
-                switch (touch.phase)
+                if (Input.touchCount > 0)
                 {
-                    case TouchPhase.Began:
-                        m_StartPos = touch.position;
-                        break;
-                    case TouchPhase.Ended:
-                        Vector3 swipeVector = new Vector3(touch.position.x - m_StartPos.x, touch.position.y - m_StartPos.y, 0);
-                        //debugText1.text = swipeVector + "";
-                        if (swipeVector.magnitude < minSwipeDistance)
-                            return;
-                        swipeVector = Camera.main.transform.TransformDirection(swipeVector.normalized);
-                        //debugText1.text = swipeVector + "";
+                    Touch touch = Input.touches[0];
+                    switch (touch.phase)
+                    {
+                        case TouchPhase.Began:
+                            m_StartPos = touch.position;
+                            break;
+                        case TouchPhase.Ended:
+                            Vector3 swipeVector = new Vector3(touch.position.x - m_StartPos.x, touch.position.y - m_StartPos.y, 0);
+                            //debugText1.text = swipeVector + "";
+                            if (swipeVector.magnitude < minSwipeDistance)
+                                return;
+                            swipeVector = Camera.main.transform.TransformDirection(swipeVector.normalized);
+                            //debugText1.text = swipeVector + "";
 
-                        swipeVector = Vector3.ProjectOnPlane(swipeVector, transform.parent.up).normalized;
-                        //debugText2.text = swipeVector + "";
-                        relAngle[0] = (int)Vector3.Angle(swipeVector, transform.parent.forward);
-                        //print(relAngle[(int)MazeModel.Direction.Forward]);
-                        relAngle[1] = (int)Vector3.Angle(swipeVector, -transform.parent.forward);
-                        //print(relAngle[(int)MazeModel.Direction.Back]);
-                        relAngle[2] = (int)Vector3.Angle(swipeVector, -transform.parent.right);
-                        //print(relAngle[(int)MazeModel.Direction.Left]);
-                        relAngle[3] = (int)Vector3.Angle(swipeVector, transform.parent.right);
-                        //print(relAngle[(int)MazeModel.Direction.Right]);
+                            swipeVector = Vector3.ProjectOnPlane(swipeVector, transform.parent.up).normalized;
+                            //debugText2.text = swipeVector + "";
+                            relAngle[0] = (int)Vector3.Angle(swipeVector, transform.parent.forward);
+                            //print(relAngle[(int)MazeModel.Direction.Forward]);
+                            relAngle[1] = (int)Vector3.Angle(swipeVector, -transform.parent.forward);
+                            //print(relAngle[(int)MazeModel.Direction.Back]);
+                            relAngle[2] = (int)Vector3.Angle(swipeVector, -transform.parent.right);
+                            //print(relAngle[(int)MazeModel.Direction.Left]);
+                            relAngle[3] = (int)Vector3.Angle(swipeVector, transform.parent.right);
+                            //print(relAngle[(int)MazeModel.Direction.Right]);
 
-                        maxRelAngle = Mathf.Min(relAngle[0], relAngle[1], relAngle[2], relAngle[3]);
+                            maxRelAngle = Mathf.Min(relAngle[0], relAngle[1], relAngle[2], relAngle[3]);
 
-                        if (maxRelAngle == relAngle[0])
-                        {
-                            if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Forward)
+                            if (maxRelAngle == relAngle[0])
                             {
-                                OpenTheDoor();
+                                if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Forward)
+                                {
+                                    OpenTheDoor();
+                                }
+                                else
+                                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
+                            }
+                            else if (maxRelAngle == relAngle[1])
+                            {
+                                if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Back)
+                                {
+                                    OpenTheDoor();
+                                }
+                                else
+                                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
+                            }
+                            else if (maxRelAngle == relAngle[2])
+                            {
+                                if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Left)
+                                {
+                                    OpenTheDoor();
+                                }
+                                else
+                                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
+                            }
+                            else if (maxRelAngle == relAngle[3])
+                            {
+                                if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Right)
+                                {
+                                    OpenTheDoor();
+                                }
+                                else
+                                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                             }
                             else
-                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
-                        }
-                        else if (maxRelAngle == relAngle[1])
-                        {
-                            if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Back)
-                            {
-                                OpenTheDoor();
-                            }
-                            else
-                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
-                        }
-                        else if (maxRelAngle == relAngle[2])
-                        {
-                            if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Left)
-                            {
-                                OpenTheDoor();
-                            }
-                            else
-                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
-                        }
-                        else if (maxRelAngle == relAngle[3])
-                        {
-                            if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Right)
-                            {
-                                OpenTheDoor();
-                            }
-                            else
-                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
-                        }
-                        else
-                            return;
+                                return;
 
-                        tForLerp = 0;
+                            tForLerp = 0;
 
-                        //for (int i = 0; i < relAngle.Length; i++)
-                        //{
-                        //    bool bigger = false;
-                        //    for (int j = 0; j < relAngle.Length; j++)
-                        //    {
-                        //        if (relAngle[i] > relAngle[j])
-                        //            bigger = true;
-                        //    }
-                        //    if (!bigger)
-                        //    {
-                        //        switch (i)
-                        //        {
-                        //            case (int)GridSystem.Direction.Forward:
-                        //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Forward, ref targetPos);
-                        //                break;
-                        //            case (int)GridSystem.Direction.Back:
-                        //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Back, ref targetPos);
-                        //                break;
-                        //            case (int)GridSystem.Direction.Right:
-                        //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Right, ref targetPos);
-                        //                break;
-                        //            case (int)GridSystem.Direction.Left:
-                        //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Left, ref targetPos);
-                        //                break;
-                        //        }
-                        //        moving = true;
-                        //        tForLerp = 0;
-                        //        return;
-                        //    }
-                        //}
-                        break;
+                            //for (int i = 0; i < relAngle.Length; i++)
+                            //{
+                            //    bool bigger = false;
+                            //    for (int j = 0; j < relAngle.Length; j++)
+                            //    {
+                            //        if (relAngle[i] > relAngle[j])
+                            //            bigger = true;
+                            //    }
+                            //    if (!bigger)
+                            //    {
+                            //        switch (i)
+                            //        {
+                            //            case (int)GridSystem.Direction.Forward:
+                            //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Forward, ref targetPos);
+                            //                break;
+                            //            case (int)GridSystem.Direction.Back:
+                            //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Back, ref targetPos);
+                            //                break;
+                            //            case (int)GridSystem.Direction.Right:
+                            //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Right, ref targetPos);
+                            //                break;
+                            //            case (int)GridSystem.Direction.Left:
+                            //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Left, ref targetPos);
+                            //                break;
+                            //        }
+                            //        moving = true;
+                            //        tForLerp = 0;
+                            //        return;
+                            //    }
+                            //}
+                            break;
+                    }
                 }
-            }
 #endif
-        }
-        else
-        {
-            animator.SetInteger("Do", 1);
-
-            tForLerp += Time.deltaTime / timeToTarget;
-            transform.localPosition = Vector3.Lerp(currentPos, targetPos, tForLerp);
-            if (tForLerp >= 1)
+            }
+            else
             {
-                moving = false;
-                currentPos = targetPos;
-                print("reach target");
+                animator.SetInteger("Do", 1);
+
+                tForLerp += Time.deltaTime / timeToTarget;
+                transform.localPosition = Vector3.Lerp(currentPos, targetPos, tForLerp);
+                if (tForLerp >= 1)
+                {
+                    moving = false;
+                    currentPos = targetPos;
+                    print("reach target");
+                }
             }
         }
     }
@@ -300,10 +306,18 @@ public class PlayerController : MonoBehaviour
     {
         health--;
         healthTxt.text = "Health: " + health;
-        if (health < 0)
+        if (health <= 0)
         {
+            print("Dead...");
+            dead = true;
             animator.SetInteger("Do", 2);
+            Invoke("CallOnDeath", 5);
         }
+    }
+
+    private void CallOnDeath()
+    {
+        mazeController.OnDeath();
     }
 
     public void UseShine()
@@ -370,6 +384,12 @@ public class PlayerController : MonoBehaviour
             {
                 print("get Heart");
                 GetHeart();
+                Destroy(other.gameObject);
+            }
+            else if (other.gameObject.CompareTag("Enemy"))
+            {
+                print("get hitted");
+                Hitted();
                 Destroy(other.gameObject);
             }
         }

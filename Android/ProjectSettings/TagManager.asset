@@ -8,6 +8,7 @@ TagManager:
   - Scroll
   - Heart
   - MainEntrance
+  - Enemy
   layers:
   - Default
   - TransparentFX

@@ -15,6 +15,9 @@ public class FieldOfView : MonoBehaviour {
 
     private int cantFindTime;
 
+    [SerializeField]
+    private Transform eyePos;
+
     private void Start()
     {
         cantFindTime = 0;
@@ -29,19 +32,27 @@ public class FieldOfView : MonoBehaviour {
             FindVisibleTarget();
         }
     }
-
+    public Collider[] targetsInViewRadius;
+    public string hitedName;
     void FindVisibleTarget()
     {
         visibleTargetTransform.Clear();
-        Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, radius * transform.lossyScale.x, targetMask);
-        for(int i = 0; i < targetsInViewRadius.Length; i++)
+        targetsInViewRadius = Physics.OverlapSphere(eyePos.position, radius * transform.lossyScale.y, targetMask);
+        RaycastHit hited;
+        if (Physics.Raycast(eyePos.position, transform.forward, out hited, radius * transform.lossyScale.y, obstacleMask, QueryTriggerInteraction.Collide))
+        {
+            hitedName = hited.transform.name;
+        }
+        for (int i = 0; i < targetsInViewRadius.Length; i++)
         {
             Transform target = targetsInViewRadius[i].transform;
             Vector3 targetDirection = (target.position - transform.position).normalized;
+            //print(Vector3.Angle(transform.forward, targetDirection));
             if(Vector3.Angle(transform.forward, targetDirection) < viewAngle / 2)
             {
                 float targetDistance = Vector3.Distance(transform.position, target.position);
-                if(!Physics.Raycast(transform.position, targetDirection, targetDistance, obstacleMask))
+                RaycastHit hit;
+                if(!Physics.Raycast(eyePos.position, targetDirection, out hit, targetDistance, obstacleMask, QueryTriggerInteraction.Collide))
                 {
                     visibleTargetTransform.Add(target);
                     GetComponent<EnemyAI>().state = EnemyAI.State.Pursuing;
@@ -59,12 +70,26 @@ public class FieldOfView : MonoBehaviour {
             }
         }
     }
+    //FOR DEBUG
+    //public float MangleDWithLocalY;
+    //public Vector3 Mdirection;
+    //public float PangleDWithLocalY;
+    //public Vector3 Pdirection;
 
-    public float angleY;
-
-	public Vector3 DirectionFormAngle(float angleD)
+    public Vector3 DirectionFormAngle(float angleD)
     {
-        angleD += transform.localEulerAngles.y;
-        return new Vector3(Mathf.Sin(Mathf.Deg2Rad * angleD), 0, Mathf.Cos(Mathf.Deg2Rad * angleD));
+        //if (angleD < 0)
+        //{
+        //    MangleDWithLocalY = angleD + transform.localEulerAngles.y;
+        //    Mdirection = new Vector3(Mathf.Sin(Mathf.Deg2Rad * angleD), 0, Mathf.Cos(Mathf.Deg2Rad * angleD));
+        //return transform.TransformDirection(Mdirection);
+        //}
+        //else
+        //{
+        //    PangleDWithLocalY = angleD + transform.localEulerAngles.y;
+        //    Pdirection = new Vector3(Mathf.Sin(Mathf.Deg2Rad * angleD), 0, Mathf.Cos(Mathf.Deg2Rad * angleD));
+        //return transform.TransformDirection(Pdirection);
+        //}
+        return transform.TransformDirection(new Vector3(Mathf.Sin(Mathf.Deg2Rad * angleD), 0, Mathf.Cos(Mathf.Deg2Rad * angleD)));
     }
 }

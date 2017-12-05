@@ -16,6 +16,8 @@ public class MazeController : MonoBehaviour
     private MazeGenerator mazeGen;
     [SerializeField]
     private GameObject exitScreen;
+    [SerializeField]
+    private GameObject deadScreen;
     // Use this for initialization
     void Start()
     {
@@ -122,5 +124,10 @@ public class MazeController : MonoBehaviour
     public void OnExitEnter()
     {
         exitScreen.SetActive(true);
+    }
+
+    public void OnDeath()
+    {
+        deadScreen.SetActive(true);
     }
 }
