@@ -103,7 +103,7 @@ public class MovementTrackableEventHandler : MonoBehaviour, ITrackableEventHandl
             component.enabled = false;
 
         // Disable gravity:
-        transform.GetChild(0).GetComponent<GravityPull>().enabled = false;
+        //transform.GetChild(0).GetComponent<GravityPull>().enabled = false;
     }
 
     #endregion // PRIVATE_METHODS

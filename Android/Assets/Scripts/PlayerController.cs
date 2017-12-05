@@ -56,7 +56,8 @@ public class PlayerController : MonoBehaviour
     private Text chakraTxt;
     private Animator animator;
     private Animator entranceAnimator;
-
+    [SerializeField]
+    private AudioSource playerFeet;
     private Vector2 m_StartPos;
 
     private int maxRelAngle;
@@ -88,6 +89,7 @@ public class PlayerController : MonoBehaviour
             if (!moving)
             {
                 animator.SetInteger("Do", 0);
+                playerFeet.Stop();
 #if UNITY_EDITOR
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -289,7 +291,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 animator.SetInteger("Do", 1);
-
+                playerFeet.Play();
                 tForLerp += Time.deltaTime / timeToTarget;
                 transform.localPosition = Vector3.Lerp(currentPos, targetPos, tForLerp);
                 if (tForLerp >= 1)
@@ -390,6 +392,7 @@ public class PlayerController : MonoBehaviour
             {
                 print("get hitted");
                 Hitted();
+                other.gameObject.GetComponent<EnemyAI>().OnAttackPlayer();
                 Destroy(other.gameObject);
             }
         }

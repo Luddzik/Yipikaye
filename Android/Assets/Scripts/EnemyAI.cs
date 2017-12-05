@@ -5,6 +5,11 @@ using UnityEngine;
 public class EnemyAI : MonoBehaviour {
 
     public enum State { Patrolling, Pursuing, Attacking, Pointing};
+
+    [Header("Game Balance")]
+    public float timeToGiveUpPursuingWhenHidden;
+
+    [Header("Variables")]
     public State state = State.Patrolling;
     [SerializeField]
     private MazeModel.Direction[] patrolPattern;
@@ -24,9 +29,7 @@ public class EnemyAI : MonoBehaviour {
             targetPos = currentPos;
         }
     }
-
     public Vector2Int targetCoor;
-
     [SerializeField]
     private Vector3 currentPos;
     [SerializeField]
@@ -37,8 +40,16 @@ public class EnemyAI : MonoBehaviour {
     private float tForLerp;
     [SerializeField]
     private bool moving;
+
+    [Header("References")]
     public MazeController mazeController;
     public MazeModel mazeModel;
+    [SerializeField]
+    private AudioSource enemyMouth;
+    [SerializeField]
+    private AudioSource enemyFeet;
+    public AudioClip foundPlayerSound;
+    public AudioClip attackPlayerSound;
 
     // Use this for initialization
     void Start (){
@@ -54,6 +65,7 @@ public class EnemyAI : MonoBehaviour {
         if (!moving)
         {
             GetComponent<Animator>().SetInteger("Do", 0);
+            enemyFeet.Stop();
             //if (state == State.Attacking && !GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Combo"))
             //    state = State.Patrolling;
             dis = (currentCoor - targetCoor).magnitude;
@@ -88,6 +100,7 @@ public class EnemyAI : MonoBehaviour {
         }
         else
         {
+            enemyFeet.Play();
             GetComponent<Animator>().SetInteger("Do", 1);
             tForLerp += Time.deltaTime / timeToTarget;
             transform.localPosition = Vector3.Lerp(currentPos, targetPos, tForLerp);
@@ -105,5 +118,17 @@ public class EnemyAI : MonoBehaviour {
         {
             player.GetComponent<PlayerController>().Hitted();
         }
+    }
+
+    public void OnAttackPlayer()
+    {
+        enemyMouth.clip = attackPlayerSound;
+        enemyMouth.Play();
+    }
+
+    public void OnFoundPlayer()
+    {
+        enemyMouth.clip = foundPlayerSound; 
+        enemyMouth.Play();
     }
 }

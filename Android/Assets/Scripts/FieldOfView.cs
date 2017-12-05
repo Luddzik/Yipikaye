@@ -57,13 +57,14 @@ public class FieldOfView : MonoBehaviour {
                     visibleTargetTransform.Add(target);
                     GetComponent<EnemyAI>().state = EnemyAI.State.Pursuing;
                     GetComponent<EnemyAI>().targetCoor = target.GetComponent<PlayerController>().CurrentCoor;
+                    GetComponent<EnemyAI>().OnFoundPlayer();
                 }
             }
         }
         if (GetComponent<EnemyAI>().state == EnemyAI.State.Pursuing && visibleTargetTransform.Count == 0)
         {
             cantFindTime++;
-            if (cantFindTime > 10)
+            if (cantFindTime > GetComponent<EnemyAI>().timeToGiveUpPursuingWhenHidden)
             {
                 GetComponent<EnemyAI>().state = EnemyAI.State.Patrolling;
                 cantFindTime = 0;
