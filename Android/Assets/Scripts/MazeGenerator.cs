@@ -63,6 +63,7 @@ public class MazeGenerator : MonoBehaviour {
     //private CapsuleController controller;
     [SerializeField] private MazeModel mazeModel;
     [SerializeField] private LightManager lightManager;
+    //[SerializeField] private GameScreen gameScreen;
 
 
     private void Awake()
@@ -87,6 +88,8 @@ public class MazeGenerator : MonoBehaviour {
         lightManager.AddLight(controller.transform.GetChild(1).GetComponent<Light>());
 
         SetupGrid();
+
+        //gameScreen.InitializePlayerUI(controller.health, controller.chakra);
     }
 
     private void Update()

@@ -17,9 +17,9 @@ public class AbilityManager : MonoBehaviour
 
     void Start()
     {
-        curAbility = startAbility;
+        //curAbility = startAbility;
         //maxAbility = maxAbilityAmount;
-        checkAbilityAmount();
+        //checkAbilityAmount();
     }
 
     public void SetAbility(int amount)

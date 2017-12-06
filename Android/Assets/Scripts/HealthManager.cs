@@ -16,9 +16,9 @@ public class HealthManager : MonoBehaviour {
 
 	void Start () 
     {
-        curHealth = startHealth;
+        //curHealth = startHealth;
         //maxHealth = maxHealthAmount;
-        checkHealthAmount();
+        //checkHealthAmount();
 	}
 
     public void SetHealth(int amount)

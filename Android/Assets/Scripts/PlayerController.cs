@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     [Header("Game Balance")]
-    [SerializeField] private int health;
-    [SerializeField] private int chakra;
+    [SerializeField] public int health;
+    [SerializeField] public int chakra;
     [SerializeField] private float timeToTarget = 0.5f;
     [SerializeField] private float minSwipeDistance = 150;
     [SerializeField] private float shiningTime;
@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour
         chakraTxt.text = "Chakra: " + chakra;
         healthTxt.text = "Health: " + health;
         animator = GetComponent<Animator>();
+        gameScreen.InitializePlayerUI(health, chakra);
     }
 
     //public Text debugText1;
@@ -309,7 +310,7 @@ public class PlayerController : MonoBehaviour
     public void UseShine()
     {
         chakra -= shineChakraCost;
-        if (chakra > 0)
+        if (chakra >= 0)
         {
             //chakraTxt.text = "Chakra: " + chakra;
             gameScreen.ReduceChakra(shineChakraCost);

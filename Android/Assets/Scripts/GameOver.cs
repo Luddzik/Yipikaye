@@ -13,6 +13,6 @@ public class GameOver : MonoBehaviour {
 
     public void Restart()
     {
-        SceneManager.LoadScene("Game", LoadSceneMode.Single);
+        SceneManager.LoadScene("RandomMap", LoadSceneMode.Single);
     }
 }

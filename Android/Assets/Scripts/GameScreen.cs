@@ -36,6 +36,12 @@ public class GameScreen : MonoBehaviour {
         SceneManager.LoadScene("MainScreen", LoadSceneMode.Single);
     }
 
+    public void InitializePlayerUI(int health, int chakra)
+    {
+        healthManager.SetHealth(health);
+        abilityManager.SetAbility(chakra);
+    }
+
     public void AddChakra()
     {
         abilityManager.AddAbility();
