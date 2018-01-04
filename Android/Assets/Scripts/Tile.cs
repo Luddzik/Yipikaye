@@ -40,13 +40,13 @@ public class Tile : MonoBehaviour{
     //public Transform localRht;
     //public Transform localLft;
 
-    public void Set(bool cantPassFwd, bool cantPassBk, bool cantPassLft, bool cantPassRht, bool isOuter, Vector3 pos)//, Content[] contents)
+    public void Set(Vector3 pos)//bool isOuter, Vector3 pos) //bool cantPassFwd, bool cantPassBk, bool cantPassLft, bool cantPassRht)//, Content[] contents)
     {
-        impassable[0] = cantPassFwd;
-        impassable[3] = cantPassRht;
-        impassable[1] = cantPassBk;
-        impassable[2] = cantPassLft;
-        this.isOuter = isOuter;
+        //impassable[0] = cantPassFwd;
+        //impassable[3] = cantPassRht;
+        //impassable[1] = cantPassBk;
+        //impassable[2] = cantPassLft;
+        //this.isOuter = isOuter;
         contents = new InnerTile[16];
         localPosition = pos;
     }

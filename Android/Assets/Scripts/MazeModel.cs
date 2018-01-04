@@ -40,6 +40,17 @@ public class MazeModel : MonoBehaviour {
     }
     public Tile[,] grid;
     //public Tile[,] innerGrid;
+    public bool[,] impassibles; //store the booleans of whether a wall is passible.
+    //     _I___I___I_     3
+    //    I R I R I R I    2   R: Room
+    //    | I   I   I |    2   I: impassibles' element
+    //    I R I R I R I    1
+    //    | I   I   I |    1
+    //    I R I R I R I    0
+    //    |_I___I___I_|    0
+    //                   Row
+    //Col 0 1 2 3 4 5 6
+    public int[] zoneEquivalencyArray;
 
     public float charHeight;
     public Direction mainEntranceFacing;
