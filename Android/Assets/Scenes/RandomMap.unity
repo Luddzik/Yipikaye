@@ -35,10 +35,10 @@ RenderSettings:
   m_DefaultReflectionMode: 0
   m_DefaultReflectionResolution: 128
   m_ReflectionBounces: 1
-  m_ReflectionIntensity: 0
+  m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 0}
+  m_IndirectSpecularColor: {r: 0.37311918, g: 0.3807398, b: 0.35872716, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -280,7 +280,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 83846078}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 359.4666, z: 0}
+  m_LocalPosition: {x: 0, y: 358.8338, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433350638}
@@ -533,7 +533,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 147612150}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 6.466614, z: 0}
+  m_LocalPosition: {x: 0, y: 5.8338013, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433350638}
@@ -740,7 +740,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 190821705}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -159.53339, z: 0}
+  m_LocalPosition: {x: 0, y: -160.1662, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433350638}
@@ -2493,7 +2493,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 743978361}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -330.5334, z: 0}
+  m_LocalPosition: {x: 0, y: -331.1662, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433350638}
@@ -3921,8 +3921,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1029340783}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 321.5, y: 181, z: 0}
-  m_LocalScale: {x: 0.33489582, y: 0.33489582, z: 0.33489582}
+  m_LocalPosition: {x: 361, y: 203, z: 0}
+  m_LocalScale: {x: 0.37604168, y: 0.37604168, z: 0.37604168}
   m_Children:
   - {fileID: 1932360044}
   - {fileID: 1080181753}
@@ -5020,8 +5020,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthPickupChance: 7.8
   abilityPickupChance: 13.8
+  deadEndTreasureBonus: 30
   trapChance: 0
   enemyChance: 50.2
+  exitBonusEnemyChance: 30
   blockChance: 71.1
   options:
     Block: 1
@@ -5033,12 +5035,14 @@ MonoBehaviour:
     GasTrap: 0
     CrushingWall: 0
     Catapult: 0
+  minDistBetweenStartNExit: 1
   isLowest: 1
   doorChance: 0
   charHeight: 0.01
   tileHeight: 0.01
   pathwayToExit: []
-  mainEntranceCWOrder: 0
+  allTileVectors: []
+  mainEntranceCCWOrder: 0
   guardPrefab: {fileID: 1860587377993688, guid: 13d4e0a9bb0bd1841b4431bc0d80e75c,
     type: 2}
   healthPickUpPrefab: {fileID: 1935445227229762, guid: b42fcda644986ea44b2eff69d18c8ccc,
@@ -5522,7 +5526,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1708293739}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 168.46661, z: 0}
+  m_LocalPosition: {x: 0, y: 167.8338, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 433350638}
@@ -6765,6 +6769,9 @@ MonoBehaviour:
   lightManager: {fileID: 260215125}
   enemies: []
   winCam: {fileID: 243680757}
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &1987312042
 GameObject:
   m_ObjectHideFlags: 0

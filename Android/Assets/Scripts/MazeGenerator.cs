@@ -10,17 +10,23 @@ public class MazeGenerator : MonoBehaviour {
     [SerializeField, Range(0, 100)]
     private float abilityPickupChance;
     [SerializeField, Range(0, 100)]
+    private float deadEndTreasureBonus;
+    [SerializeField, Range(0, 100)]
     private float trapChance;
     [SerializeField, Range(0, 100)]
     private float enemyChance;
     [SerializeField, Range(0, 100)]
+    private float exitBonusEnemyChance;
+    [SerializeField, Range(0, 100)]
     private float blockChance;
     [SerializeField]
     private PropOption options;
+    [SerializeField]
+    private int minDistBetweenStartNExit = 1;
 
     [Header("Variables")]
     [SerializeField]
-    private bool isLowest;
+    private bool isLowest; //is it the lowest floor of castle?
     [SerializeField, Range(0, 100)]
     private float doorChance;
     [SerializeField]
@@ -34,13 +40,14 @@ public class MazeGenerator : MonoBehaviour {
     private Vector2Int start;
     private Vector2Int exit;
     [SerializeField]
-    private int mainEntranceCWOrder;
+    private int mainEntranceCCWOrder;
     private bool modifying;
     private Vector3 localPtZero;
     private float localsquareLengthX;
     private float localsquareLengthY;
     private List<LineRenderer> m_lineRenderers;
     private Vector3 tileScale;
+    private List<Vector2Int> deadEndsCoor;
 
     [Header("Prefab")]
     public GameObject guardPrefab;
@@ -71,6 +78,7 @@ public class MazeGenerator : MonoBehaviour {
     {
         pathwayToExit = new List<Vector2Int>();
         allTileVectors = new List<Vector2Int>();
+        deadEndsCoor = new List<Vector2Int>();
     }
 
     private void Start()
@@ -103,6 +111,7 @@ public class MazeGenerator : MonoBehaviour {
     {
         modifying = true;
         tileScale = (new Vector3(1f / mazeModel.Column, 1f / Mathf.Sqrt(mazeModel.Column * mazeModel.Row), 1f / mazeModel.Row)) / 4;
+        mazeModel.GetComponent<MazeController>().InnerTileLength = tileScale.y;
         ClearTiles();
         DeleteLineRenderers();
         mazeModel.CenterPos = new Vector3(0, charHeight, 0);
@@ -160,39 +169,44 @@ public class MazeGenerator : MonoBehaviour {
         start = new Vector2Int(Random.Range(0, mazeModel.Column), Random.Range(0, mazeModel.Row));
         if (isLowest)
         {
-            mainEntranceCWOrder = Random.Range(0, mazeModel.Row * mazeModel.Column);
-            int x = 0, y = 0;
-            if (mainEntranceCWOrder < mazeModel.Column) //Toward -z
+            do
             {
-                x = mainEntranceCWOrder; y = 0;
-            }
-            else if (mainEntranceCWOrder < mazeModel.Column + mazeModel.Row) //Toward x
-            {
-                x = mazeModel.Column - 1; y = mainEntranceCWOrder - mazeModel.Column;
-            }
-            else if (mainEntranceCWOrder < mazeModel.Column * 2 + mazeModel.Row) //Toward z
-            {
-                x = -mainEntranceCWOrder + mazeModel.Column * 2 + mazeModel.Row - 1;
-                y = mazeModel.Row - 1;
-            }
-            else  //if (mainEntranceCWOrder < mazeModel.Column * 2 + mazeModel.Row * 2) //Toward -x
-            {
-                x = 0;
-                y = -mainEntranceCWOrder + mazeModel.Column * 2 + mazeModel.Row * 2 - 1;
-            }
-            exit = new Vector2Int(x, y);
+                mainEntranceCCWOrder = Random.Range(0, mazeModel.Row * mazeModel.Column); //Starting from bottom-left
+                int x = 0, y = 0;
+                if (mainEntranceCCWOrder < mazeModel.Column) //Toward -z
+                {
+                    x = mainEntranceCCWOrder; y = 0;
+                }
+                else if (mainEntranceCCWOrder < mazeModel.Column + mazeModel.Row) //Toward x
+                {
+                    x = mazeModel.Column - 1; y = mainEntranceCCWOrder - mazeModel.Column;
+                }
+                else if (mainEntranceCCWOrder < mazeModel.Column * 2 + mazeModel.Row) //Toward z
+                {
+                    x = -mainEntranceCCWOrder + mazeModel.Column * 2 + mazeModel.Row - 1;
+                    y = mazeModel.Row - 1;
+                }
+                else  //if (mainEntranceCWOrder < mazeModel.Column * 2 + mazeModel.Row * 2) //Toward -x
+                {
+                    x = 0;
+                    y = -mainEntranceCCWOrder + mazeModel.Column * 2 + mazeModel.Row * 2 - 1;
+                }
+                exit = new Vector2Int(x, y);
+            } while (Mathf.Abs((exit - start).magnitude) <= minDistBetweenStartNExit);
         }
         else
+        {
             exit = new Vector2Int(Random.Range(0, mazeModel.Column), Random.Range(0, mazeModel.Row));
 
-        if(mazeModel.Row + mazeModel.Column > 4)
-        {
-            while (Mathf.Abs(exit.magnitude - start.magnitude) <= 1)
+            //Re-roll the exit position if the distance from the start point is too small
+            if (mazeModel.Row + mazeModel.Column > 4)
             {
-                exit = new Vector2Int(Random.Range(0, mazeModel.Column), Random.Range(0, mazeModel.Row));
+                while (Mathf.Abs((exit - start).magnitude) <= minDistBetweenStartNExit)
+                {
+                    exit = new Vector2Int(Random.Range(0, mazeModel.Column), Random.Range(0, mazeModel.Row));
+                }
             }
         }
-        
 
         //Generate a path to exit
         GenerateExitPathway(start, exit);
@@ -201,17 +215,17 @@ public class MazeGenerator : MonoBehaviour {
         //Fill in the walls
         DistributeWalls();
 
-        //Distribute walls and Instantiate Tiles
-        bool isOuter;
-        bool cantPassFwd;
-        bool cantPassBk;
-        bool cantPassLft;
-        bool cantPassRht;
-        int wallCount;
-        List<float> listOfWallProba = new List<float>(); 
-        for (int i = 0; i < mazeModel.Column; i++)
+        //Instantiate Tiles
+        //bool isOuter;
+        //bool cantPassFwd;
+        //bool cantPassBk;
+        //bool cantPassLft;
+        //bool cantPassRht;
+        //int wallCount;
+        //List<float> listOfWallProba = new List<float>(); 
+        for (int j = 0; j < mazeModel.Row; j++)
         {
-            for (int j = 0; j < mazeModel.Row; j++)
+            for (int i = 0; i < mazeModel.Column; i++)
             {
                 //cantPassFwd = false; cantPassBk = false; cantPassLft = false; cantPassRht = false;
                 //isOuter = false;
@@ -286,7 +300,7 @@ public class MazeGenerator : MonoBehaviour {
         }
 
         //Check if there are squares blocking from 4 sides
-        ClearBlockingSquare();
+        //ClearBlockingSquare();
 
         InstantiateWalls();
 
@@ -301,11 +315,12 @@ public class MazeGenerator : MonoBehaviour {
         //GameObject tempContent = null;
         bool hasStart = (start.x == i && start.y == j);
         bool hasExit = (exit.x == i && exit.y == j);
+        bool hasStair = !isLowest;
+        bool isDeadEnd = (deadEndsCoor.Count>0 && deadEndsCoor[0].x == i && deadEndsCoor[0].y == j);
 
-        if (isLowest)
-            hasExit = false;
+        if (isDeadEnd) deadEndsCoor.RemoveAt(0);
 
-        mazeModel.grid[i, j].CompleteRandomize(hasStart, hasExit, ref healthPickupChance, ref abilityPickupChance, ref enemyChance, ref blockChance);
+        mazeModel.grid[i, j].CompleteRandomize(hasStart, hasExit, isDeadEnd, hasStair, ref healthPickupChance, ref abilityPickupChance, ref enemyChance, ref blockChance, ref deadEndTreasureBonus, ref exitBonusEnemyChance);
         for (int k = 0; k < Tile.contentPositions.Length; k++)
         {
             GameObject tempContent = null;
@@ -361,64 +376,64 @@ public class MazeGenerator : MonoBehaviour {
     //    mazeModel.grid[exit.x, exit.y].transform.GetChild(1).GetComponent<MeshRenderer>().material = guardPrefab.GetComponent<MeshRenderer>().sharedMaterial;
     //}
 
-    void ClearBlockingSquare()
-    {
-        int blockCount;
-        int randomInt;
-        bool wallCracked;
-        for (int i = 0; i < mazeModel.Column; i++)
-        {
-            for (int j = 0; j < mazeModel.Row; j++)
-            {
-                blockCount = 0;
-                if (mazeModel.grid[i, j].impassable[0] || (j < mazeModel.Row - 1 && mazeModel.grid[i, j + 1].impassable[1]))
-                    blockCount++;
-                if (mazeModel.grid[i, j].impassable[1] || (j > 0 && mazeModel.grid[i, j - 1].impassable[0]))
-                    blockCount++;
-                if (mazeModel.grid[i, j].impassable[2] || (i > 0 && mazeModel.grid[i - 1, j].impassable[3]))
-                    blockCount++;
-                if (mazeModel.grid[i, j].impassable[3] || (i < mazeModel.Column - 1 && mazeModel.grid[i + 1, j].impassable[2]))
-                    blockCount++;
-                if (blockCount >= 4)
-                {
-                    wallCracked = false;
-                    do
-                    {
-                        randomInt = Random.Range(0, 4);
-                        if (randomInt == 0 && j < mazeModel.Row - 1) //break fwd
-                        {
-                            mazeModel.grid[i, j].impassable[0] = false;
-                            mazeModel.grid[i, j + 1].impassable[1] = false;
-                            wallCracked = true;
-                            print(i + ", " + j + ": break fwd");
-                        }
-                        else if (randomInt == 1 && j > 0) //break back
-                        {
-                            mazeModel.grid[i, j].impassable[1] = false;
-                            mazeModel.grid[i, j - 1].impassable[0] = false;
-                            wallCracked = true;
-                            print(i + ", " + j + ": break back");
-                        }
-                        else if (randomInt == 2 && i > 0) //break left
-                        {
-                            mazeModel.grid[i, j].impassable[2] = false;
-                            mazeModel.grid[i - 1, j].impassable[3] = false;
-                            wallCracked = true;
-                            print(i + ", " + j + ": break left");
-                        }
-                        else if (randomInt == 3 && i > mazeModel.Column) //break right
-                        {
-                            mazeModel.grid[i, j].impassable[3] = false;
-                            mazeModel.grid[i + 1, j].impassable[2] = false;
-                            wallCracked = true;
-                            print(i + ", " + j + ": break right");
-                        }
-                    } while (!wallCracked);
+    //void ClearBlockingSquare()
+    //{
+    //    int blockCount;
+    //    int randomInt;
+    //    bool wallCracked;
+    //    for (int i = 0; i < mazeModel.Column; i++)
+    //    {
+    //        for (int j = 0; j < mazeModel.Row; j++)
+    //        {
+    //            blockCount = 0;
+    //            if (mazeModel.grid[i, j].impassable[0] || (j < mazeModel.Row - 1 && mazeModel.grid[i, j + 1].impassable[1]))
+    //                blockCount++;
+    //            if (mazeModel.grid[i, j].impassable[1] || (j > 0 && mazeModel.grid[i, j - 1].impassable[0]))
+    //                blockCount++;
+    //            if (mazeModel.grid[i, j].impassable[2] || (i > 0 && mazeModel.grid[i - 1, j].impassable[3]))
+    //                blockCount++;
+    //            if (mazeModel.grid[i, j].impassable[3] || (i < mazeModel.Column - 1 && mazeModel.grid[i + 1, j].impassable[2]))
+    //                blockCount++;
+    //            if (blockCount >= 4)
+    //            {
+    //                wallCracked = false;
+    //                do
+    //                {
+    //                    randomInt = Random.Range(0, 4);
+    //                    if (randomInt == 0 && j < mazeModel.Row - 1) //break fwd
+    //                    {
+    //                        mazeModel.grid[i, j].impassable[0] = false;
+    //                        mazeModel.grid[i, j + 1].impassable[1] = false;
+    //                        wallCracked = true;
+    //                        print(i + ", " + j + ": break fwd");
+    //                    }
+    //                    else if (randomInt == 1 && j > 0) //break back
+    //                    {
+    //                        mazeModel.grid[i, j].impassable[1] = false;
+    //                        mazeModel.grid[i, j - 1].impassable[0] = false;
+    //                        wallCracked = true;
+    //                        print(i + ", " + j + ": break back");
+    //                    }
+    //                    else if (randomInt == 2 && i > 0) //break left
+    //                    {
+    //                        mazeModel.grid[i, j].impassable[2] = false;
+    //                        mazeModel.grid[i - 1, j].impassable[3] = false;
+    //                        wallCracked = true;
+    //                        print(i + ", " + j + ": break left");
+    //                    }
+    //                    else if (randomInt == 3 && i > mazeModel.Column) //break right
+    //                    {
+    //                        mazeModel.grid[i, j].impassable[3] = false;
+    //                        mazeModel.grid[i + 1, j].impassable[2] = false;
+    //                        wallCracked = true;
+    //                        print(i + ", " + j + ": break right");
+    //                    }
+    //                } while (!wallCracked);
                     
-                }
-            }
-        }
-    }
+    //            }
+    //        }
+    //    }
+    //}
 
     void GenerateExitPathway(Vector2Int start, Vector2Int exit)
     {
@@ -576,6 +591,14 @@ public class MazeGenerator : MonoBehaviour {
                     int index = Random.Range(0, wallToBreak.Count - 1);
                     mazeModel.impassibles[wallToBreak[index].x, wallToBreak[index].y] = false;
                 }
+                //find the deadends (i.e. block from three sides)
+                else if((mazeModel.impassibles[i * 2, j] && mazeModel.impassibles[i * 2 + 1, j] && mazeModel.impassibles[(i + 1) * 2, j]) ||
+                    (mazeModel.impassibles[i * 2, j] && mazeModel.impassibles[i * 2 + 1, j] && mazeModel.impassibles[i * 2 + 1, j]) ||
+                    (mazeModel.impassibles[i * 2, j] && mazeModel.impassibles[(i + 1) * 2, j] && mazeModel.impassibles[i * 2 + 1, j]) ||
+                    (mazeModel.impassibles[i * 2 + 1, j] && mazeModel.impassibles[(i + 1) * 2, j] && mazeModel.impassibles[i * 2 + 1, j]))
+                {
+                    deadEndsCoor.Add(new Vector2Int(i, j));
+                }
             }
         }
 
@@ -655,8 +678,8 @@ public class MazeGenerator : MonoBehaviour {
                     {
                         if (mazeModel.impassibles[i, j])
                         {
-                            randomIndex = Random.Range(0, indoorWallPrefabs.Length);
-                            tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i/2 - 1, j].transform);
+                            //randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                            tempWall = Instantiate(indoorWallPrefabs[1], mazeModel.grid[i/2 - 1, j].transform);
                             tempWall.GetComponent<Animator>().enabled = false;
                             tempWall.name = "Right Wall";
                             tempWall.transform.localRotation = Quaternion.Euler(0, 90, 0);
@@ -664,9 +687,9 @@ public class MazeGenerator : MonoBehaviour {
                         }
                         else if (Random.value > doorChance / 100f)
                         {
-                            randomIndex = Random.Range(0, indoorWallPrefabs.Length);
-                            tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i/2 - 1, j].transform);
-                            tempWall.GetComponent<Animator>().SetBool("FwdOrRight", true);
+                            //randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                            tempWall = Instantiate(indoorWallPrefabs[0], mazeModel.grid[i/2 - 1, j].transform);
+                            //tempWall.GetComponent<Animator>().SetBool("toRight", true);
                             tempWall.name = "Right Door";
                             tempWall.transform.localRotation = Quaternion.Euler(0, 90, 0);
                             mazeModel.grid[i / 2 - 1, j].walls[3] = tempWall;
@@ -676,8 +699,8 @@ public class MazeGenerator : MonoBehaviour {
                     {
                         if (mazeModel.impassibles[i, j])
                         {
-                            randomIndex = Random.Range(0, indoorWallPrefabs.Length);
-                            tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i/2, j].transform);
+                            //randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                            tempWall = Instantiate(indoorWallPrefabs[1], mazeModel.grid[i/2, j].transform);
                             tempWall.GetComponent<Animator>().enabled = false;
                             tempWall.name = "Back Wall";
                             tempWall.transform.localRotation = Quaternion.Euler(0, 180, 0);
@@ -685,9 +708,9 @@ public class MazeGenerator : MonoBehaviour {
                         }
                         else if (Random.value > doorChance / 100f)
                         {
-                            randomIndex = Random.Range(0, indoorWallPrefabs.Length);
-                            tempWall = Instantiate(indoorWallPrefabs[randomIndex], mazeModel.grid[i/2, j].transform);
-                            tempWall.GetComponent<Animator>().SetBool("FwdOrRight", false);
+                            //randomIndex = Random.Range(0, indoorWallPrefabs.Length);
+                            tempWall = Instantiate(indoorWallPrefabs[0], mazeModel.grid[i/2, j].transform);
+                            //tempWall.GetComponent<Animator>().SetBool("toRight", false);
                             tempWall.name = "Back Door";
                             tempWall.transform.localRotation = Quaternion.Euler(0, 180, 0);
                             mazeModel.grid[i / 2, j].walls[1] = tempWall;
@@ -905,9 +928,9 @@ public class MazeGenerator : MonoBehaviour {
     void InstantiateMainEntrance()
     {
         int x, y;
-        if (mainEntranceCWOrder < mazeModel.Column) //Toward -z
+        if (mainEntranceCCWOrder < mazeModel.Column) //Toward -z
         {
-            x = mainEntranceCWOrder; y = 0;
+            x = mainEntranceCCWOrder; y = 0;
             print(x +", " + y);
             Destroy(mazeModel.grid[x, y].walls[1]);
             mazeModel.grid[x, y].walls[1] = Instantiate(mainEntrancePrefab, mazeModel.grid[x, y].transform);
@@ -916,9 +939,9 @@ public class MazeGenerator : MonoBehaviour {
             mazeModel.mainEntranceFacing = MazeModel.Direction.Back;
             lightManager.AddLight(mazeModel.grid[x, y].walls[1].transform.GetChild(1).GetComponent<Light>());
         }
-        else if (mainEntranceCWOrder < mazeModel.Column + mazeModel.Row) //Toward x
+        else if (mainEntranceCCWOrder < mazeModel.Column + mazeModel.Row) //Toward x
         {
-            x = mazeModel.Column - 1; y = mainEntranceCWOrder - mazeModel.Column;
+            x = mazeModel.Column - 1; y = mainEntranceCCWOrder - mazeModel.Column;
             print(x + ", " + y);
 
             Destroy(mazeModel.grid[x, y].walls[3]);
@@ -928,9 +951,9 @@ public class MazeGenerator : MonoBehaviour {
             lightManager.AddLight(mazeModel.grid[x, y].walls[3].transform.GetChild(0).GetComponent<Light>());
             lightManager.AddLight(mazeModel.grid[x, y].walls[3].transform.GetChild(1).GetComponent<Light>());
         }
-        else if (mainEntranceCWOrder < mazeModel.Column * 2 + mazeModel.Row) //Toward z
+        else if (mainEntranceCCWOrder < mazeModel.Column * 2 + mazeModel.Row) //Toward z
         {
-            x = -mainEntranceCWOrder + mazeModel.Column * 2 + mazeModel.Row - 1;
+            x = -mainEntranceCCWOrder + mazeModel.Column * 2 + mazeModel.Row - 1;
             y = mazeModel.Row - 1;
             print(x + ", " + y);
 
@@ -940,10 +963,10 @@ public class MazeGenerator : MonoBehaviour {
             lightManager.AddLight(mazeModel.grid[x, y].walls[0].transform.GetChild(0).GetComponent<Light>());
             lightManager.AddLight(mazeModel.grid[x, y].walls[0].transform.GetChild(1).GetComponent<Light>());
         }
-        else if (mainEntranceCWOrder < mazeModel.Column * 2 + mazeModel.Row * 2) //Toward -x
+        else if (mainEntranceCCWOrder < mazeModel.Column * 2 + mazeModel.Row * 2) //Toward -x
         {
             x = 0;
-            y = -mainEntranceCWOrder + mazeModel.Column * 2 + mazeModel.Row * 2 - 1;
+            y = -mainEntranceCCWOrder + mazeModel.Column * 2 + mazeModel.Row * 2 - 1;
             print(x + ", " + y);
 
             Destroy(mazeModel.grid[x, y].walls[2]);

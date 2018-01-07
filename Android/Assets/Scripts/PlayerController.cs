@@ -46,6 +46,7 @@ public class PlayerController : MonoBehaviour
     private Animator entranceAnimator;
     [SerializeField] private AudioSource playerFeet;
     private Vector2 m_StartPos;
+    [SerializeField] private Transform eyePos;
 
     private int maxRelAngle;
     private int[] relAngle;
@@ -102,7 +103,7 @@ public class PlayerController : MonoBehaviour
 
                     if (maxRelAngle == relAngle[0])
                     {
-                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
+                        moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                         if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Forward)
                         {
                             OpenTheDoor();
@@ -110,7 +111,7 @@ public class PlayerController : MonoBehaviour
                     }
                     else if (maxRelAngle == relAngle[1])
                     {
-                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
+                        moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
                         if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Back)
                         {
                             OpenTheDoor();
@@ -118,7 +119,7 @@ public class PlayerController : MonoBehaviour
                     }
                     else if (maxRelAngle == relAngle[2])
                     {
-                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
+                        moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
                         if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Left)
                         {
                             OpenTheDoor();
@@ -126,7 +127,7 @@ public class PlayerController : MonoBehaviour
                     }
                     else if (maxRelAngle == relAngle[3])
                     {
-                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
+                        moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                         if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Right)
                         {
                             OpenTheDoor();
@@ -202,7 +203,7 @@ public class PlayerController : MonoBehaviour
 
                              if (maxRelAngle == relAngle[0])
                             {
-                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
+                                moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                                 if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Forward)
                                 {
                                     OpenTheDoor();
@@ -210,7 +211,7 @@ public class PlayerController : MonoBehaviour
                             }
                             else if (maxRelAngle == relAngle[1])
                             {
-                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
+                                moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
                                 if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Back)
                                 {
                                     OpenTheDoor();
@@ -218,7 +219,7 @@ public class PlayerController : MonoBehaviour
                             }
                             else if (maxRelAngle == relAngle[2])
                             {
-                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
+                                moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
                                 if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Left)
                                 {
                                     OpenTheDoor();
@@ -226,7 +227,7 @@ public class PlayerController : MonoBehaviour
                             }
                             else if (maxRelAngle == relAngle[3])
                             {
-                                moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
+                                moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                                 if (canPushEntrance && mazeModel.mainEntranceFacing == MazeModel.Direction.Right)
                                 {
                                     OpenTheDoor();

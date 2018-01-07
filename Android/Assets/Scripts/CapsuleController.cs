@@ -21,6 +21,7 @@ public class CapsuleController : MonoBehaviour {
     private float[] relAngle;
     private Vector3 joystickVector;
     public Vector2Int currentCoor;
+    public Transform eyePos;
 
     // Use this for initialization
     void Start ()
@@ -60,16 +61,16 @@ public class CapsuleController : MonoBehaviour {
                     switch (i)
                     {
                         case (int)MazeModel.Direction.Forward:
-                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
+                            moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                             break;
                         case (int)MazeModel.Direction.Back:
-                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
+                            moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
                             break;
                         case (int)MazeModel.Direction.Right:
-                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
+                            moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                             break;
                         case (int)MazeModel.Direction.Left:
-                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
+                            moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
                             break;
                     }
                     tForLerp = 0;

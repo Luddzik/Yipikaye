@@ -50,6 +50,7 @@ public class EnemyAI : MonoBehaviour {
     private AudioSource enemyFeet;
     public AudioClip foundPlayerSound;
     public AudioClip attackPlayerSound;
+    public Transform eyePos;
 
     // Use this for initialization
     void Start (){
@@ -73,7 +74,7 @@ public class EnemyAI : MonoBehaviour {
             switch (state)
             {
                 case State.Patrolling:
-                    moving = mazeController.MoveCharacter(transform, ref currentCoor, patrolPattern[curPatrolIndex], ref targetPos, true);
+                    moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, patrolPattern[curPatrolIndex], ref targetPos, true);
                     curPatrolIndex = (curPatrolIndex + 1) % patrolPattern.Length;
                     tForLerp = 0;
                     break;
@@ -84,13 +85,13 @@ public class EnemyAI : MonoBehaviour {
                     //    GetComponent<Animator>().SetInteger("Do", 4);
                     //}
                     if (currentCoor.y < targetCoor.y)
-                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
+                        moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                     else if (currentCoor.y > targetCoor.y)
-                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
+                        moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
                     else if (currentCoor.x > targetCoor.x)
-                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
+                        moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
                     else if (currentCoor.x < targetCoor.x)
-                        moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
+                        moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                     tForLerp = 0;
                     break;
                 case State.Attacking:

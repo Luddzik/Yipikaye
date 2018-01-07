@@ -51,7 +51,7 @@ public class Tile : MonoBehaviour{
         localPosition = pos;
     }
 
-    public void CompleteRandomize(bool hasStart, bool hasExit, ref float healthPickupChance, ref float abilityPickupChance, ref float guardChance, ref float blockChance) //, float BallPillarFireChance, float SpikeTrapChance, 
+    public void CompleteRandomize(bool hasStart, bool hasExit, bool isDeadEnd,bool hasStair, ref float healthPickupChance, ref float abilityPickupChance, ref float guardChance, ref float blockChance, ref float deadEndBonus, ref float exitBonusEnemyChance) //, float BallPillarFireChance, float SpikeTrapChance, 
         //float FireTrapChance, float GasTrapChance, float CrushingWallChance, float CatapultChance)
     {
         List<InnerTile> unmanagedContent = new List<InnerTile>();
@@ -68,27 +68,58 @@ public class Tile : MonoBehaviour{
             unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
         }
         else {
-            if (hasExit)
+            if (hasStair)
             {
                 unmanagedContent[unmanagedContent.Count - 1].content = Content.Exit;
                 unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
             }
-
-            if (unmanagedContent.Count > 0 && Random.value < healthPickupChance / 100)
+            if (isDeadEnd)
             {
-                unmanagedContent[unmanagedContent.Count - 1].content = Content.HealthPickup;
-                unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+                if (unmanagedContent.Count > 0 && Random.value < (healthPickupChance + deadEndBonus) / 100)
+                {
+                    unmanagedContent[unmanagedContent.Count - 1].content = Content.HealthPickup;
+                    unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+                }
+                if (unmanagedContent.Count > 0 && Random.value < (healthPickupChance + deadEndBonus) / 100)
+                {
+                    unmanagedContent[unmanagedContent.Count - 1].content = Content.AbilityPickup;
+                    unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+                }
             }
-            if (unmanagedContent.Count > 0 && Random.value < abilityPickupChance / 100)
+            else
             {
-                unmanagedContent[unmanagedContent.Count - 1].content = Content.AbilityPickup;
-                unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+                if (unmanagedContent.Count > 0 && Random.value < healthPickupChance / 100)
+                {
+                    unmanagedContent[unmanagedContent.Count - 1].content = Content.HealthPickup;
+                    unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+                }
+                if (unmanagedContent.Count > 0 && Random.value < abilityPickupChance / 100)
+                {
+                    unmanagedContent[unmanagedContent.Count - 1].content = Content.AbilityPickup;
+                    unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+                }
             }
 
-            if (unmanagedContent.Count > 0 && Random.value < guardChance / 100)
+            if (hasExit)
             {
-                unmanagedContent[unmanagedContent.Count - 1].content = Content.Guard;
-                unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+                if (unmanagedContent.Count > 0 && Random.value < (guardChance+exitBonusEnemyChance) / 100)
+                {
+                    unmanagedContent[unmanagedContent.Count - 1].content = Content.Guard;
+                    unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+                }
+                if (unmanagedContent.Count > 0 && Random.value < (guardChance + exitBonusEnemyChance) / 100)
+                {
+                    unmanagedContent[unmanagedContent.Count - 1].content = Content.Guard;
+                    unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+                }
+            }
+            else
+            {
+                if (unmanagedContent.Count > 0 && Random.value < guardChance / 100)
+                {
+                    unmanagedContent[unmanagedContent.Count - 1].content = Content.Guard;
+                    unmanagedContent.RemoveAt(unmanagedContent.Count - 1);
+                }
             }
             if (unmanagedContent.Count > 0 && Random.value < blockChance / 100)
             {

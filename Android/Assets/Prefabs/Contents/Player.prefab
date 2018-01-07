@@ -1633,6 +1633,7 @@ MonoBehaviour:
   healthTxt: {fileID: 0}
   chakraTxt: {fileID: 0}
   playerFeet: {fileID: 82460139699340426}
+  eyePos: {fileID: 4283798319217932}
 --- !u!124 &124477707329836830
 Behaviour:
   m_ObjectHideFlags: 1

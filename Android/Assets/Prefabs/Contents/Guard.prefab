@@ -1386,6 +1386,7 @@ MonoBehaviour:
   enemyFeet: {fileID: 82435985918644920}
   foundPlayerSound: {fileID: 8300000, guid: 5df615b1a6968bf4e82d2c0b5ac60b7c, type: 3}
   attackPlayerSound: {fileID: 8300000, guid: f58ef3422bab04b48a05d675b561089e, type: 3}
+  eyePos: {fileID: 4466095661123974}
   dis: 0
 --- !u!114 &114681291120933662
 MonoBehaviour:

@@ -41,6 +41,7 @@ public class Swipe : MonoBehaviour
     private MazeController mazeController;
     [SerializeField]
     private MazeModel mazeModel;
+    public Transform eyePos;
     //private GridSystem gridSystem;
 
     private Vector2 m_StartPos;
@@ -100,14 +101,14 @@ public class Swipe : MonoBehaviour
 
                 if (maxRelAngle == relAngle[0])
                 {
-                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
+                    moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                 }
                 else if (maxRelAngle == relAngle[1])
-                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
+                    moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
                 else if (maxRelAngle == relAngle[2])
-                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
+                    moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
                 else if (maxRelAngle == relAngle[3])
-                    moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
+                    moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                 else
                     return;
 
@@ -177,13 +178,13 @@ public class Swipe : MonoBehaviour
                         maxRelAngle = Mathf.Min(relAngle[0], relAngle[1], relAngle[2], relAngle[3]);
 
                         if (maxRelAngle == relAngle[0])
-                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
+                            moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Forward, ref targetPos, false);
                         else if (maxRelAngle == relAngle[1])
-                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
+                            moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Back, ref targetPos, false);
                         else if (maxRelAngle == relAngle[2])
-                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
+                            moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Left, ref targetPos, false);
                         else if (maxRelAngle == relAngle[3])
-                            moving = mazeController.MoveCharacter(transform, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
+                            moving = mazeController.MoveCharacter(transform, eyePos, ref currentCoor, MazeModel.Direction.Right, ref targetPos, false);
                         else
                             return;
 

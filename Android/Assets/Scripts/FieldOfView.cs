@@ -38,10 +38,10 @@ public class FieldOfView : MonoBehaviour {
     {
         visibleTargetTransform.Clear();
         targetsInViewRadius = Physics.OverlapSphere(eyePos.position, radius * transform.lossyScale.y, targetMask);
-        RaycastHit hited;
-        if (Physics.Raycast(eyePos.position, transform.forward, out hited, radius * transform.lossyScale.y, obstacleMask, QueryTriggerInteraction.Collide))
+        RaycastHit hitted;
+        if (Physics.Raycast(eyePos.position, transform.forward, out hitted, radius * transform.lossyScale.y, obstacleMask, QueryTriggerInteraction.Collide))
         {
-            hitedName = hited.transform.name;
+            hitedName = hitted.transform.name;
         }
         for (int i = 0; i < targetsInViewRadius.Length; i++)
         {
