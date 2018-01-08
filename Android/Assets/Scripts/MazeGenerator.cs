@@ -25,6 +25,7 @@ public class MazeGenerator : MonoBehaviour {
     private int minDistBetweenStartNExit = 1;
 
     [Header("Variables")]
+    public int gameMode;
     [SerializeField]
     private bool isLowest; //is it the lowest floor of castle?
     [SerializeField, Range(0, 100)]
@@ -65,9 +66,11 @@ public class MazeGenerator : MonoBehaviour {
     public GameObject linePrefab;
 
     [Header("Reference")]
-    public Transform tilesParent;
-    public Transform pilarsParent;
+    [SerializeField] private Transform tilesParent;
+    [SerializeField] private Transform pilarsParent;
+    [SerializeField] private Transform interactablesParent;
     [SerializeField] private PlayerController controller;
+    [SerializeField] private Game3PlayerController controller3;
     //private CapsuleController controller;
     [SerializeField] private MazeModel mazeModel;
     [SerializeField] private LightManager lightManager;
@@ -79,9 +82,12 @@ public class MazeGenerator : MonoBehaviour {
         pathwayToExit = new List<Vector2Int>();
         allTileVectors = new List<Vector2Int>();
         deadEndsCoor = new List<Vector2Int>();
+        //m_lineRenderers = new List<LineRenderer>();
     }
 
-    private void Start()
+
+
+    public void StartGeneration()
     {
         localPtZero = new Vector3(-0.5f, charHeight, -0.5f);
         if (!options.Block) blockChance = 0;
@@ -92,12 +98,27 @@ public class MazeGenerator : MonoBehaviour {
         for (int i = 0; i < Tile.contentPositions.Length; i++)
             Tile.contentPositions[i].y = charHeight;
 
-        m_lineRenderers = new List<LineRenderer>();
-        lightManager.AddLight(controller.transform.GetChild(0).GetComponent<Light>());
-        lightManager.AddLight(controller.transform.GetChild(1).GetComponent<Light>());
+        if (gameMode == 1)
+        {
+            lightManager.AddLight(controller.transform.GetChild(0).GetComponent<Light>());
+            lightManager.AddLight(controller.transform.GetChild(1).GetComponent<Light>());
+        }
+        else
+        {
+            lightManager.AddLight(controller3.transform.GetChild(0).GetComponent<Light>());
+            lightManager.AddLight(controller3.transform.GetChild(1).GetComponent<Light>());
+        }
 
         SetupGrid();
 
+        if (gameMode == 3)
+        {
+            mazeModel.GetComponent<PlayerCentering>().CenterToThePlayer();
+            //interactablesParent.SetParent(controller.transform);
+            //tilesParent.SetParent(controller.transform);
+            //pilarsParent.SetParent(controller.transform);
+            //controller.transform.localPosition = Vector3.zero;
+        }
         //gameScreen.InitializePlayerUI(controller.health, controller.chakra);
     }
 
@@ -111,9 +132,20 @@ public class MazeGenerator : MonoBehaviour {
     {
         modifying = true;
         tileScale = (new Vector3(1f / mazeModel.Column, 1f / Mathf.Sqrt(mazeModel.Column * mazeModel.Row), 1f / mazeModel.Row)) / 4;
+
+        //Deal with scale of the player
+        if (gameMode == 1)
+            controller.transform.localScale = new Vector3(controller.transform.localScale.x * tileScale.x,
+                    controller.transform.localScale.y * tileScale.y,
+                    controller.transform.localScale.z * tileScale.z);
+        else if(gameMode==3)
+            controller3.transform.localScale = new Vector3(controller3.transform.localScale.x * tileScale.x,
+                    controller3.transform.localScale.y * tileScale.y,
+                    controller3.transform.localScale.z * tileScale.z);
+
         mazeModel.GetComponent<MazeController>().InnerTileLength = tileScale.y;
         ClearTiles();
-        DeleteLineRenderers();
+        //DeleteLineRenderers();
         mazeModel.CenterPos = new Vector3(0, charHeight, 0);
         mazeModel.grid = new Tile[mazeModel.Column, mazeModel.Row];
         mazeModel.impassibles = new bool[mazeModel.Column * 2 + 1, mazeModel.Row + 1];
@@ -124,10 +156,7 @@ public class MazeGenerator : MonoBehaviour {
         //    newScale.z / mazeModel.transform.localScale.z);
 
         mazeModel.transform.localScale = newScale;
-        //Deal with scale of Capsule
-        controller.transform.localScale = new Vector3(controller.transform.localScale.x * tileScale.x,
-                controller.transform.localScale.y * tileScale.y,
-                controller.transform.localScale.z * tileScale.z);
+        
 
         //controller.transform.GetChild(0).GetComponent<Light>().range *= tileScale.x;
         //controller.transform.GetChild(1).GetComponent<Light>().range *= tileScale.x;
@@ -327,7 +356,7 @@ public class MazeGenerator : MonoBehaviour {
             switch (mazeModel.grid[i, j].contents[k].content)
             {
                 case Tile.Content.Guard:
-                    tempContent = Instantiate(guardPrefab, mazeModel.transform.GetChild(1));
+                    tempContent = Instantiate(guardPrefab, interactablesParent);
                     tempContent.GetComponent<EnemyAI>().mazeController = mazeModel.GetComponent<MazeController>();
                     tempContent.GetComponent<EnemyAI>().mazeModel = mazeModel;
                     tempContent.GetComponent<EnemyAI>().CurrentCoor = new Vector2Int(i * 4 + k % 4, j * 4 + k / 4);
@@ -335,27 +364,30 @@ public class MazeGenerator : MonoBehaviour {
                     mazeModel.GetComponent<MazeController>().AddEnemy(tempContent);
                     break;
                 case Tile.Content.Block:
-                    tempContent = Instantiate(blockPrefab, mazeModel.transform.GetChild(1)); //mazeModel.outerGrid[i, j].transform);
+                    tempContent = Instantiate(blockPrefab, interactablesParent); //mazeModel.outerGrid[i, j].transform);
                     tempContent.name = "Block " + i + ", " + j;
                     if (Random.value > 0.5f)
                         tempContent.transform.localEulerAngles = new Vector3(0, 90, 0);
                     break;
                 case Tile.Content.HealthPickup:
-                    tempContent = Instantiate(healthPickUpPrefab, mazeModel.transform.GetChild(1));
+                    tempContent = Instantiate(healthPickUpPrefab, interactablesParent);
                     tempContent.name = "Pickup " + i + ", " + j;
                     break;
                 case Tile.Content.AbilityPickup:
-                    tempContent = Instantiate(abilityPickUpPrefab, mazeModel.transform.GetChild(1));
+                    tempContent = Instantiate(abilityPickUpPrefab, interactablesParent);
                     tempContent.name = "Pickup " + i + ", " + j;
                     
                     break;
                 case Tile.Content.Start:
-                    tempContent = Instantiate(startPtPrefab, mazeModel.transform.GetChild(1));
+                    tempContent = Instantiate(startPtPrefab, interactablesParent);
                     tempContent.name = "Start " + i + ", " + j;
-                    controller.CurrentCoor = new Vector2Int(i * 4 + k % 4, j * 4 + k / 4);
+                    if(gameMode==1)
+                        controller.CurrentCoor = new Vector2Int(i * 4 + k % 4, j * 4 + k / 4);
+                    else if(gameMode==3)
+                        controller3.CurrentCoor = new Vector2Int(i * 4 + k % 4, j * 4 + k / 4);
                     break;
                 case Tile.Content.Exit:
-                    tempContent = Instantiate(exitPrefab, mazeModel.transform.GetChild(1));
+                    tempContent = Instantiate(exitPrefab, interactablesParent);
                     tempContent.name = "Exit " + i + ", " + j;
                     break;
             }
@@ -367,7 +399,12 @@ public class MazeGenerator : MonoBehaviour {
                     tempContent.transform.localScale.z * tileScale.z);
             }
             if (mazeModel.grid[i, j].contents[k].content == Tile.Content.Start)
-                controller.transform.position = tempContent.transform.position;
+            {
+                if(gameMode==1)
+                    controller.transform.position = tempContent.transform.position;
+                else if (gameMode == 3)
+                    controller3.transform.position = tempContent.transform.position;
+            }
         }
     }
 

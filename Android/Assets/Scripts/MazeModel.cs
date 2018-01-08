@@ -69,13 +69,13 @@ public class MazeModel : MonoBehaviour {
     //}
 
     //[SerializeField]
-    private PlayerController controller;
+    //private PlayerController controller;
 
     // Use this for initialization
     void Awake()
     {
-        controller = transform.GetChild(0).GetComponent<PlayerController>();
-        Assert.IsNull(controller, "MazeModel: Cannot reference the controller!");
+        //controller = transform.GetChild(0).GetComponent<PlayerController>();
+        //Assert.IsNull(controller, "MazeModel: Cannot reference the controller!");
     }
 
     public Vector3 GetPosition(Vector2Int coord)
