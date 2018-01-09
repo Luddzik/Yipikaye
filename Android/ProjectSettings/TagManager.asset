@@ -9,6 +9,7 @@ TagManager:
   - Heart
   - MainEntrance
   - Enemy
+  - Collectable
   layers:
   - Default
   - TransparentFX

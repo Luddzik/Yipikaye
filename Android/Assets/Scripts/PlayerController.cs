@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
     }
     [SerializeField] private Vector3 currentPos;
     [SerializeField] private Vector3 targetPos;
+    [SerializeField] private int collectableCount = 0;
     private float tForLerp;
     private bool moving;
     [SerializeField] private bool dead;
@@ -137,36 +138,6 @@ public class PlayerController : MonoBehaviour
                         return;
 
                     tForLerp = 0;
-
-                    //for (int i = 0; i < relAngle.Length; i++)
-                    //{
-                    //    bool bigger = false;
-                    //    for (int j = 0; j < relAngle.Length; j++)
-                    //    {
-                    //        if (relAngle[i] > relAngle[j])
-                    //            bigger = true;
-                    //    }
-                    //    if (!bigger)
-                    //    {
-                    //        switch (i)
-                    //        {
-                    //            case (int)MazeModel.Direction.Forward:
-                    //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Forward, ref targetPos);
-                    //                break;
-                    //            case (int)GridSystem.Direction.Back:
-                    //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Back, ref targetPos);
-                    //                break;
-                    //            case (int)GridSystem.Direction.Right:
-                    //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Right, ref targetPos);
-                    //                break;
-                    //            case (int)GridSystem.Direction.Left:
-                    //                moving = mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Left, ref targetPos);
-                    //                break;
-                    //        }
-                    //        tForLerp = 0;
-                    //        return;
-                    //    }
-                    //}
                 }
 #endif
                 //debugText1.text = Camera.main.transform.position+"";
@@ -237,37 +208,6 @@ public class PlayerController : MonoBehaviour
                                 return;
 
                             tForLerp = 0;
-
-                            //for (int i = 0; i < relAngle.Length; i++)
-                            //{
-                            //    bool bigger = false;
-                            //    for (int j = 0; j < relAngle.Length; j++)
-                            //    {
-                            //        if (relAngle[i] > relAngle[j])
-                            //            bigger = true;
-                            //    }
-                            //    if (!bigger)
-                            //    {
-                            //        switch (i)
-                            //        {
-                            //            case (int)GridSystem.Direction.Forward:
-                            //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Forward, ref targetPos);
-                            //                break;
-                            //            case (int)GridSystem.Direction.Back:
-                            //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Back, ref targetPos);
-                            //                break;
-                            //            case (int)GridSystem.Direction.Right:
-                            //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Right, ref targetPos);
-                            //                break;
-                            //            case (int)GridSystem.Direction.Left:
-                            //                mazeController.MoveCharacter(ref currentCoor, MazeModel.Direction.Left, ref targetPos);
-                            //                break;
-                            //        }
-                            //        moving = true;
-                            //        tForLerp = 0;
-                            //        return;
-                            //    }
-                            //}
                             break;
                     }
                 }
@@ -333,6 +273,12 @@ public class PlayerController : MonoBehaviour
         //chakraTxt.text = "Chakra: " + chakra;
     }
 
+    void GetCollectable()
+    {
+        //incomplete
+        collectableCount++;
+    }
+
     private IEnumerator Shining()
     {
         print("Shine!");
@@ -384,6 +330,12 @@ public class PlayerController : MonoBehaviour
                 print("get hitted");
                 Hitted();
                 other.gameObject.GetComponent<EnemyAI>().OnAttackPlayer();
+                Destroy(other.gameObject);
+            }
+            else if (other.gameObject.CompareTag("Collectable"))
+            {
+                print("get collectable");
+                GetCollectable();
                 Destroy(other.gameObject);
             }
         }

@@ -8852,7 +8852,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1350015839
 Transform:
   m_ObjectHideFlags: 0
@@ -9508,6 +9508,7 @@ MonoBehaviour:
   enemyChance: 50.2
   exitBonusEnemyChance: 30
   blockChance: 71.1
+  collectableChance: 0
   options:
     Block: 1
     Guard: 1
@@ -10053,6 +10054,7 @@ MonoBehaviour:
   enemyChance: 50.2
   exitBonusEnemyChance: 30
   blockChance: 71.1
+  collectableChance: 0
   options:
     Block: 1
     Guard: 1
@@ -11161,6 +11163,7 @@ MonoBehaviour:
   currentCoor: {x: 0, y: 0}
   currentPos: {x: 0, y: 0, z: 0}
   targetPos: {x: 0, y: 0, z: 0}
+  collectableCount: 0
   dead: 0
   canPushEntrance: 0
   gameScreen: {fileID: 818093717}

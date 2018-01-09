@@ -34,6 +34,7 @@ public class Game3PlayerController : MonoBehaviour
     }
     [SerializeField] private Vector3 currentPos;
     [SerializeField] private Vector3 targetPos;
+    [SerializeField] private int collectableCount = 0;
     private Vector3 mazeCurrentPos;
     private Vector3 mazeTargetPos;
     private float tForLerp;
@@ -274,6 +275,12 @@ public class Game3PlayerController : MonoBehaviour
         //chakraTxt.text = "Chakra: " + chakra;
     }
 
+    void GetCollectable()
+    {
+        //incomplete
+        collectableCount++;
+    }
+
     private IEnumerator Shining()
     {
         print("Shine!");
@@ -325,6 +332,12 @@ public class Game3PlayerController : MonoBehaviour
                 print("get hitted");
                 Hitted();
                 other.gameObject.GetComponent<EnemyAI>().OnAttackPlayer();
+                Destroy(other.gameObject);
+            }
+            else if (other.gameObject.CompareTag("Collectable"))
+            {
+                print("get collectable");
+                GetCollectable();
                 Destroy(other.gameObject);
             }
         }
