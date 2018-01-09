@@ -143,7 +143,7 @@ public class MazeGenerator : MonoBehaviour {
                     controller3.transform.localScale.y * tileScale.y,
                     controller3.transform.localScale.z * tileScale.z);
 
-        mazeModel.GetComponent<MazeController>().InnerTileLength = tileScale.y;
+        mazeModel.GetComponent<MazeController>().InnerTileLength = tileScale.x / 0.3f * mazeModel.Size;
         ClearTiles();
         //DeleteLineRenderers();
         mazeModel.CenterPos = new Vector3(0, charHeight, 0);
@@ -172,7 +172,7 @@ public class MazeGenerator : MonoBehaviour {
 
         InstantiateOuterCorner();
 
-        lightManager.Resize(tileScale.x);
+        lightManager.Resize(tileScale.x / 0.3f * mazeModel.Size);
 
         //controller.transform.position = startPosition;
 

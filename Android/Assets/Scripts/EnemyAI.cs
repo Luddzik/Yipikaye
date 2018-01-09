@@ -117,7 +117,10 @@ public class EnemyAI : MonoBehaviour {
     {
         if (state == State.Attacking)
         {
-            player.GetComponent<PlayerController>().Hitted();
+            if(player.GetComponent<PlayerController>() != null)
+                player.GetComponent<PlayerController>().Hitted();
+            else if(player.GetComponent<Game3PlayerController>() != null)
+                player.GetComponent<Game3PlayerController>().Hitted();
         }
     }
 

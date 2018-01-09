@@ -56,7 +56,11 @@ public class FieldOfView : MonoBehaviour {
                 {
                     visibleTargetTransform.Add(target);
                     GetComponent<EnemyAI>().state = EnemyAI.State.Pursuing;
-                    GetComponent<EnemyAI>().targetCoor = target.GetComponent<PlayerController>().CurrentCoor;
+                    if(target.GetComponent<PlayerController>() != null)
+                        GetComponent<EnemyAI>().targetCoor = target.GetComponent<PlayerController>().CurrentCoor;
+                    else if(target.GetComponent<Game3PlayerController>() != null)
+                        GetComponent<EnemyAI>().targetCoor = target.GetComponent<Game3PlayerController>().CurrentCoor;
+
                     GetComponent<EnemyAI>().OnFoundPlayer();
                 }
             }

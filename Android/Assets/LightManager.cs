@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LightManager : MonoBehaviour {
 
+    [SerializeField]
     private List<Light> lights = new List<Light>();
 
     public void AddLight(Light light)

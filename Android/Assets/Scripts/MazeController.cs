@@ -79,7 +79,10 @@ public class MazeController : MonoBehaviour
                     return false;
                 //Obstacle check
                 if (Physics.Raycast(eyePos.position, charTransform.forward, out hitted, innerTileLength, obstacleMask, QueryTriggerInteraction.Collide))
+                {
+                    //print("hitted " + hitted.transform.name);
                     return false;
+                }
                 
                 curCoor += Vector2Int.down;
                 //print("Move back");
