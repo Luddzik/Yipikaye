@@ -11,7 +11,7 @@ public class WallCollectables : MonoBehaviour {
 
     public void RandomizedCollectables(float collectableChance)
     {
-        if (Random.value > collectableChance/100) le.SetActive(true);
-        if (Random.value > collectableChance / 100) gan.SetActive(true);
+        if (Random.value < collectableChance/100) le.SetActive(true);
+        if (Random.value < collectableChance / 100) gan.SetActive(true);
     }
 }

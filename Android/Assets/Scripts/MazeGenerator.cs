@@ -5,6 +5,14 @@ using UnityEngine;
 public class MazeGenerator : MonoBehaviour {
 
     [Header("Game Balance")]
+    [SerializeField]
+    private int minRow;
+    [SerializeField]
+    private int maxRow;
+    [SerializeField]
+    private int minColumn;
+    [SerializeField]
+    private int maxColumn;
     [SerializeField, Range(0, 100)]
     private float healthPickupChance;
     [SerializeField, Range(0, 100)]
@@ -490,8 +498,6 @@ public class MazeGenerator : MonoBehaviour {
             }
         }
 
-        //string output = "Finalized impassibles: \n";
-
         //Break wall surrounding one tile
         for (int j = 0; j < mazeModel.Row; j++)
         {
@@ -523,6 +529,110 @@ public class MazeGenerator : MonoBehaviour {
                 }
             }
         }
+
+        //Zone Mapping
+        int zoneCount = 0;
+        string zoneEquivStr = "";
+        mazeModel.zone = new int[mazeModel.Column * 2 - 1, mazeModel.Row * 2 - 1];
+        for (int j = mazeModel.zone.GetLength(1) - 1; j >= 0; j--)
+        {
+            for (int i = 0; i < mazeModel.zone.GetLength(0); i++)
+            {
+                if (zoneCount == 0) //new zone
+                {
+                    zoneCount++;
+                    mazeModel.zone[i, j] = zoneCount;
+                    mazeModel.zoneEquivalencyArray.Add(0); mazeModel.zoneEquivalencyArray.Add(1);
+                }
+                else if (i % 2 == 0 && j % 2 == 0) //tile spaze always passable
+                {
+                    if (j < mazeModel.zone.GetLength(1) - 1 && mazeModel.zone[i, j + 1] != 0) //if not the most upper zone and the upper zone is passable
+                    {
+                        mazeModel.zone[i, j] = mazeModel.zone[i, j + 1]; //use the same zone as the above zone
+                        if (i > 0 && mazeModel.zone[i - 1, j] != 0)  //if not the leftmost zone and the left zone is passable
+                            mazeModel.zoneEquivalencyArray[mazeModel.zone[i - 1, j]] = mazeModel.zone[i, j];
+                    }
+                    else if (i > 0 && mazeModel.zone[i - 1, j] != 0)  //if not the leftmost zone and the left zone is passable
+                        mazeModel.zone[i, j] = mazeModel.zone[i - 1, j]; //use the same zone as the left zone
+                    else //new zone
+                    {
+                        zoneCount++;
+                        mazeModel.zone[i, j] = zoneCount;
+                        mazeModel.zoneEquivalencyArray.Add(zoneCount);
+                    }
+                }
+                else if (j % 2 == 1) //walls/doors facing down
+                {
+                    if (i % 2 == 1) //pillars must be impassable
+                        mazeModel.zone[i, j] = 0;
+                    else if (mazeModel.impassibles[i + 1, j - j / 2]) //check the walls/doors impassable value
+                        mazeModel.zone[i, j] = 0;
+                    else //passable zone
+                        mazeModel.zone[i, j] = mazeModel.zone[i, j + 1]; //use the same zone as the above zone
+                }
+                else if (i % 2 == 1) //walls/doors facing right
+                {
+                    if (mazeModel.impassibles[i + 1, j - j / 2]) //check the walls/doors impassable value
+                        mazeModel.zone[i, j] = 0;
+                    else //passable zone
+                        mazeModel.zone[i, j] = mazeModel.zone[i - 1, j]; //use the same zone as the left zone
+                }
+
+                zoneEquivStr += mazeModel.zone[i, j];
+            }
+            zoneEquivStr += "\n";
+        }
+        print("Zone Map: \n" + zoneEquivStr);
+
+        for (int k = 2; k < mazeModel.zoneEquivalencyArray.Count; k++)
+        {
+            if (mazeModel.zoneEquivalencyArray[k] == k) //Not connecting zone
+            {
+                //Search for first element of that zone
+                for (int j = mazeModel.zone.GetLength(1) - 1; j >= 0; j--)
+                {
+                    for (int i = 0; i < mazeModel.zone.GetLength(0); i++)
+                    {
+                        if(mazeModel.zone[i, j] == k)
+                        {
+                            if(i>0 && mazeModel.zone[i-1, j] == 0) //If there is a impassable next to the zone
+                            {
+                                //Do zone mapping for that impassable
+                                if (j < mazeModel.zone.GetLength(1) - 1 && mazeModel.zone[i - 1, j + 1] != 0 && mazeModel.zone[i - 1, j + 1] != k) //if there is a passable of different zone above it
+                                {
+                                    mazeModel.zone[i - 1, j] = mazeModel.zone[i - 1, j + 1];
+                                    mazeModel.zoneEquivalencyArray[k] = mazeModel.zone[i - 1, j];
+                                    mazeModel.impassibles[(i - 1) + 1, j - j / 2] = false;
+                                }
+                                else if (i - 1 > 0 && mazeModel.zone[i - 2, j] != 0 && mazeModel.zone[i - 2, j] != k) //if there is a passable of different zone next to it
+                                {
+                                    mazeModel.zone[i - 1, j] = mazeModel.zone[i - 2, j];
+                                    mazeModel.zoneEquivalencyArray[k] = mazeModel.zone[i - 1, j];
+                                    mazeModel.impassibles[(i - 1) + 1, j - j / 2] = false;
+                                }
+                            }
+                            else if(j< mazeModel.zone.GetLength(1) - 1 && mazeModel.zone[i, j + 1] == 0) //If there is a impassable above the zone
+                            {
+                                //Do zone mapping for that impassable
+                                if (j + 1< mazeModel.zone.GetLength(1) - 1 && mazeModel.zone[i, j + 2] != 0 && mazeModel.zone[i, j + 2] != k) //if there is a passable of different zone above it
+                                {
+                                    mazeModel.zone[i, j + 1] = mazeModel.zone[i, j + 2];
+                                    mazeModel.zoneEquivalencyArray[k] = mazeModel.zone[i, j + 1];
+                                    mazeModel.impassibles[i + 1, (j + 1) - (j + 1) / 2] = false;
+                                }
+                                else if (i > 0 && mazeModel.zone[i - 1, j + 1] != 0 && mazeModel.zone[i - 1, j + 1] != k) //if there is a passable of different zone next to it
+                                {
+                                    mazeModel.zone[i, j + 1] = mazeModel.zone[i - 1, j + 1];
+                                    mazeModel.zoneEquivalencyArray[k] = mazeModel.zone[i, j + 1];
+                                    mazeModel.impassibles[i + 1, (j + 1) - (j + 1) / 2] = false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } 
+
 
         //print impassibles
         string output="";

@@ -50,7 +50,8 @@ public class MazeModel : MonoBehaviour {
     //    |_I___I___I_|    0
     //                   Row
     //Col 0 1 2 3 4 5 6
-    public int[] zoneEquivalencyArray;
+    public int[,] zone;
+    public List<int> zoneEquivalencyArray;
 
     public float charHeight;
     public Direction mainEntranceFacing;
@@ -76,6 +77,7 @@ public class MazeModel : MonoBehaviour {
     {
         //controller = transform.GetChild(0).GetComponent<PlayerController>();
         //Assert.IsNull(controller, "MazeModel: Cannot reference the controller!");
+        zoneEquivalencyArray = new List<int>();
     }
 
     public Vector3 GetPosition(Vector2Int coord)
