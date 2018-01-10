@@ -100,7 +100,8 @@ public class GameModeTrackableEventHandler : MonoBehaviour, ITrackableEventHandl
             gameSelection.SetActive(true);
             gameSelection.GetComponent<StarManage>().SetStar(pastRating);
         }
-        //gameUI.SetActive(true);
+        else
+            gameUI.SetActive(true);
         //if (!mazeGenerated)
         //{
         //    generator.StartGeneration();

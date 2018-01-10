@@ -19,6 +19,7 @@ public class Game3PlayerController : MonoBehaviour
     public int collectableCount = 0;
     public int curHealth;
     public int curChakra;
+    public bool isShining;
     [SerializeField]
     private Vector2Int currentCoor;
     public Vector2Int CurrentCoor
@@ -257,7 +258,7 @@ public class Game3PlayerController : MonoBehaviour
     public void UseShine()
     {
         curChakra -= shineChakraCost;
-        if (curChakra >= 0)
+        if (curChakra >= 0 && !isShining)
         {
             //chakraTxt.text = "Chakra: " + chakra;
             gameScreen.ReduceChakra(shineChakraCost);
@@ -288,9 +289,11 @@ public class Game3PlayerController : MonoBehaviour
     private IEnumerator Shining()
     {
         print("Shine!");
+        isShining = true;
         transform.GetChild(0).GetComponent<Light>().range *= 4;
         yield return new WaitForSeconds(shiningTime);
         transform.GetChild(0).GetComponent<Light>().range /= 4;
+        isShining = false;
     }
 
     private void OpenTheDoor()
