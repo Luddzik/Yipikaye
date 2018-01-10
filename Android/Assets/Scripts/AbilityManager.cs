@@ -1,53 +1,44 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class AbilityManager : MonoBehaviour
 {
-
     [SerializeField] private int startAbility = 3;
     [SerializeField] private int curAbility;
-    [SerializeField] private Image[] abilityImage; //location in the canvas
-    [SerializeField] private Sprite[] abilitySprite; //empty (0) and full (1)
+    [SerializeField] private Image[] abilityImage;
+    [SerializeField] private Sprite[] abilitySprite;
 
-    private int maxAbilityAmount = 10;
-    //private int maxAbility;
+    //[SerializeField] private Image abilityBG;
+    //[SerializeField] private Sprite[] abilityBgSprite;
+
+    private int maxAbilityAmount = 8;
     private int abilityPerHeart = 1;
 
-    void Start()
-    {
-        //curAbility = startAbility;
-        //maxAbility = maxAbilityAmount;
-        //checkAbilityAmount();
-    }
+    //private void Start()
+    //{
+    //    curAbility = startAbility;
+    //    UpdateAbility();
+    //}
 
-    public void SetAbility(int amount)
+    public void SetAbility(int chakra)
     {
-        curAbility = amount;
-        checkAbilityAmount();
-    }
-
-    void checkAbilityAmount()
-    {
-        for (int i = 0; i < maxAbilityAmount; i++)
-        {
-            if (curAbility <= i)
-            {
-                abilityImage[i].enabled = false;
-            }
-            else
-            {
-                abilityImage[i].enabled = true;
-            }
-        }
+        curAbility = chakra;
         UpdateAbility();
     }
 
-    void UpdateAbility()
+    private void UpdateAbility()
     {
         bool empty = false;
         int i = 0;
+
+        /*if (curAbility == 0)
+        {
+            abilityBG.sprite = abilityBgSprite[1];
+        }
+        if (curAbility >= 1)
+        {
+            abilityBG.sprite = abilityBgSprite[0];
+        }*/
 
         foreach (Image image in abilityImage)
         {
@@ -78,14 +69,13 @@ public class AbilityManager : MonoBehaviour
     {
         curAbility -= amount;
         curAbility = Mathf.Clamp(curAbility, 0, maxAbilityAmount);
-        checkAbilityAmount();
+        UpdateAbility();
     }
 
     public void AddAbility()
     {
         curAbility++;
         curAbility = Mathf.Clamp(curAbility, 0, maxAbilityAmount);
-
-        checkAbilityAmount();
+        UpdateAbility();
     }
 }

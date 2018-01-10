@@ -59,6 +59,7 @@ public class MazeGenerator : MonoBehaviour {
     private List<LineRenderer> m_lineRenderers;
     private Vector3 tileScale;
     private List<Vector2Int> deadEndsCoor;
+    public bool mazeGenerated = false;
 
     [Header("Prefab")]
     public GameObject guardPrefab;
@@ -80,9 +81,10 @@ public class MazeGenerator : MonoBehaviour {
     [SerializeField] private Transform pilarsParent;
     [SerializeField] private Transform interactablesParent;
     [SerializeField] private PlayerController controller;
-    [SerializeField] private Game3PlayerController controller3;
+    [SerializeField] private Game3PlayerController controller2;
     //private CapsuleController controller;
     [SerializeField] private MazeModel mazeModel;
+    private MazeController mazeController;
     [SerializeField] private LightManager lightManager;
     //[SerializeField] private GameScreen gameScreen;
 
@@ -99,6 +101,19 @@ public class MazeGenerator : MonoBehaviour {
 
     public void StartGeneration()
     {
+        if (mazeGenerated)
+            return;
+        if (gameMode == 1)
+        {
+            controller.gameObject.SetActive(true);
+        }
+        else if(gameMode == 2)
+        {
+            mazeModel.gameObject.SetActive(true);
+        }
+        
+        mazeController = mazeModel.GetComponent<MazeController>();
+        mazeController.gameUI.gameObject.SetActive(true);
         localPtZero = new Vector3(-0.5f, charHeight, -0.5f);
         if (!options.Block) blockChance = 0;
         if (!options.Guard) enemyChance = 0;
@@ -113,16 +128,25 @@ public class MazeGenerator : MonoBehaviour {
             lightManager.AddLight(controller.transform.GetChild(0).GetComponent<Light>());
             lightManager.AddLight(controller.transform.GetChild(1).GetComponent<Light>());
         }
-        else
+        else if(gameMode == 2)
         {
-            lightManager.AddLight(controller3.transform.GetChild(0).GetComponent<Light>());
-            lightManager.AddLight(controller3.transform.GetChild(1).GetComponent<Light>());
+            lightManager.AddLight(controller2.transform.GetChild(0).GetComponent<Light>());
+            lightManager.AddLight(controller2.transform.GetChild(1).GetComponent<Light>());
         }
 
         SetupGrid();
 
-        if (gameMode == 3)
+        lightManager.ResizeNSetIntensity(tileScale.x / 0.3f * mazeModel.Size, PlayerPrefs.GetFloat("SliderBrightness"));
+
+        AudioListener.volume = PlayerPrefs.GetFloat("SliderVolume");
+        if(gameMode == 1)
         {
+            mazeController.gameMode = 1;
+        }
+        else if (gameMode == 2)
+        {
+            mazeController.gameMode = 2;
+
             mazeModel.GetComponent<PlayerCentering>().CenterToThePlayer();
             //interactablesParent.SetParent(controller.transform);
             //tilesParent.SetParent(controller.transform);
@@ -130,6 +154,7 @@ public class MazeGenerator : MonoBehaviour {
             //controller.transform.localPosition = Vector3.zero;
         }
         //gameScreen.InitializePlayerUI(controller.health, controller.chakra);
+        mazeGenerated = true;
     }
 
     private void Update()
@@ -148,10 +173,10 @@ public class MazeGenerator : MonoBehaviour {
             controller.transform.localScale = new Vector3(controller.transform.localScale.x * tileScale.x,
                     controller.transform.localScale.y * tileScale.y,
                     controller.transform.localScale.z * tileScale.z);
-        else if(gameMode==3)
-            controller3.transform.localScale = new Vector3(controller3.transform.localScale.x * tileScale.x,
-                    controller3.transform.localScale.y * tileScale.y,
-                    controller3.transform.localScale.z * tileScale.z);
+        else if(gameMode==2)
+            controller2.transform.localScale = new Vector3(controller2.transform.localScale.x * tileScale.x,
+                    controller2.transform.localScale.y * tileScale.y,
+                    controller2.transform.localScale.z * tileScale.z);
 
         mazeModel.GetComponent<MazeController>().InnerTileLength = tileScale.x / 0.3f * mazeModel.Size;
         ClearTiles();
@@ -182,7 +207,6 @@ public class MazeGenerator : MonoBehaviour {
 
         InstantiateOuterCorner();
 
-        lightManager.Resize(tileScale.x / 0.3f * mazeModel.Size);
 
         //controller.transform.position = startPosition;
 
@@ -335,8 +359,8 @@ public class MazeGenerator : MonoBehaviour {
                     tempContent.name = "Start " + i + ", " + j;
                     if(gameMode==1)
                         controller.CurrentCoor = new Vector2Int(i * 4 + k % 4, j * 4 + k / 4);
-                    else if(gameMode==3)
-                        controller3.CurrentCoor = new Vector2Int(i * 4 + k % 4, j * 4 + k / 4);
+                    else if(gameMode==2)
+                        controller2.CurrentCoor = new Vector2Int(i * 4 + k % 4, j * 4 + k / 4);
                     break;
                 case Tile.Content.Exit:
                     tempContent = Instantiate(exitPrefab, interactablesParent);
@@ -354,8 +378,8 @@ public class MazeGenerator : MonoBehaviour {
             {
                 if(gameMode==1)
                     controller.transform.position = tempContent.transform.position;
-                else if (gameMode == 3)
-                    controller3.transform.position = tempContent.transform.position;
+                else if (gameMode == 2)
+                    controller2.transform.position = tempContent.transform.position;
             }
         }
     }
@@ -713,7 +737,7 @@ public class MazeGenerator : MonoBehaviour {
                             //randomIndex = Random.Range(0, indoorWallPrefabs.Length);
                             tempWall = Instantiate(indoorWallPrefabs[1], mazeModel.grid[i/2 - 1, j].transform);
                             tempWall.GetComponent<Animator>().enabled = false;
-                            tempWall.GetComponent<WallCollectables>().RandomizedCollectables(collectableChance);
+                            mazeModel.totalCollectableNum += tempWall.GetComponent<WallCollectables>().RandomizedCollectables(collectableChance);
                             tempWall.name = "Right Wall";
                             lightManager.AddLight(tempWall.transform.GetChild(0).GetComponent<Light>());
                             tempWall.transform.localRotation = Quaternion.Euler(0, 90, 0);
@@ -737,7 +761,7 @@ public class MazeGenerator : MonoBehaviour {
                             //randomIndex = Random.Range(0, indoorWallPrefabs.Length);
                             tempWall = Instantiate(indoorWallPrefabs[1], mazeModel.grid[i/2, j].transform);
                             tempWall.GetComponent<Animator>().enabled = false;
-                            tempWall.GetComponent<WallCollectables>().RandomizedCollectables(collectableChance);
+                            mazeModel.totalCollectableNum += tempWall.GetComponent<WallCollectables>().RandomizedCollectables(collectableChance);
                             tempWall.name = "Back Wall";
                             lightManager.AddLight(tempWall.transform.GetChild(0).GetComponent<Light>());
                             tempWall.transform.localRotation = Quaternion.Euler(0, 180, 0);

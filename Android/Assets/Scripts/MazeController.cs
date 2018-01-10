@@ -10,6 +10,7 @@ public class MazeController : MonoBehaviour
     private Vector3 localPtZero;
     //private float localsquareLengthX;
     //private float localsquareLengthY;
+    public int gameMode;
     private float innerTileLength;
     public float InnerTileLength
     {
@@ -17,12 +18,15 @@ public class MazeController : MonoBehaviour
         set { innerTileLength = value; }
     }
 
-    [SerializeField] private MazeGenerator mazeGen;
+    public MazeGenerator mazeGen;
+    public GameScreen gameUI;
     [SerializeField] private GameObject exitScreen;
     [SerializeField] private GameObject deadScreen;
-    [SerializeField] private LightManager lightManager;
+    public LightManager lightManager;
+    public PlayerController player1;
+    public Game3PlayerController player2;
     [SerializeField] private List<GameObject> enemies = new List<GameObject>();
-    [SerializeField] private GameObject winCam;
+   // [SerializeField] private GameObject winCam;
     [SerializeField] private LayerMask obstacleMask;
 
     // Use this for initialization
@@ -166,7 +170,31 @@ public class MazeController : MonoBehaviour
             Destroy(enemies[i]);
         //Camera.main.gameObject.SetActive(false);
         //winCam.SetActive(false); ;
-        Invoke("CallChangeSceneToWin", 8);
+        //Invoke("CallChangeSceneToWin", 8);
+
+        int rating = 0;
+        if(gameMode == 1)
+        {
+            if (player1.collectableCount == mazeModel.totalCollectableNum)
+                rating++;
+            if (player1.curHealth >= player1.iniHealth)
+                rating++;
+            if (player1.curChakra >= player1.iniChakra)
+                rating++;
+            PlayerPrefs.SetInt("Mode1Rating", rating);
+        }
+        else if(gameMode == 2)
+        {
+            if (player2.collectableCount == mazeModel.totalCollectableNum)
+                rating++;
+            if (player2.curHealth >= player2.iniHealth)
+                rating++;
+            if (player2.curChakra >= player2.iniChakra)
+                rating++;
+            PlayerPrefs.SetInt("Mode2Rating", rating);
+        }
+
+        gameUI.Victory(rating);
     }
 
     public void CallChangeSceneToWin()
@@ -176,7 +204,8 @@ public class MazeController : MonoBehaviour
 
     public void OnDeath()
     {
+        gameUI.GameOver();
         //deadScreen.SetActive(true);
-        UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        //UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver", UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 }

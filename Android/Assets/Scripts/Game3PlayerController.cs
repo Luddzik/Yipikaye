@@ -7,15 +7,18 @@ using UnityEngine.UI;
 public class Game3PlayerController : MonoBehaviour
 {
     [Header("Game Balance")]
-    [SerializeField]
-    public int health;
-    [SerializeField] public int chakra;
+    public int iniHealth;
+    public int iniChakra;
+
     [SerializeField] private float timeToTarget = 0.5f;
     [SerializeField] private float minSwipeDistance = 150;
     [SerializeField] private float shiningTime;
     [SerializeField] private int shineChakraCost;
 
     [Header("Variables")]
+    public int collectableCount = 0;
+    public int curHealth;
+    public int curChakra;
     [SerializeField]
     private Vector2Int currentCoor;
     public Vector2Int CurrentCoor
@@ -34,7 +37,6 @@ public class Game3PlayerController : MonoBehaviour
     }
     [SerializeField] private Vector3 currentPos;
     [SerializeField] private Vector3 targetPos;
-    [SerializeField] private int collectableCount = 0;
     private Vector3 mazeCurrentPos;
     private Vector3 mazeTargetPos;
     private float tForLerp;
@@ -47,8 +49,8 @@ public class Game3PlayerController : MonoBehaviour
     private GameScreen gameScreen;
     [SerializeField] private MazeController mazeController;
     [SerializeField] private MazeModel mazeModel;
-    [SerializeField] private Text healthTxt;
-    [SerializeField] private Text chakraTxt;
+    //[SerializeField] private Text healthTxt;
+    //[SerializeField] private Text chakraTxt;
     private Animator animator;
     private Animator entranceAnimator;
     [SerializeField] private AudioSource playerFeet;
@@ -68,10 +70,12 @@ public class Game3PlayerController : MonoBehaviour
         moving = false;
         canPushEntrance = false;
         dead = false;
-        chakraTxt.text = "Chakra: " + chakra;
-        healthTxt.text = "Health: " + health;
+        curChakra = iniChakra;
+        curHealth = iniHealth;
+        //chakraTxt.text = "Chakra: " + chakra;
+        //healthTxt.text = "Health: " + health;
         animator = GetComponent<Animator>();
-        gameScreen.InitializePlayerUI(health, chakra);
+        gameScreen.InitializePlayerUI(iniHealth, iniChakra);
     }
 
     private void Update()
@@ -233,10 +237,10 @@ public class Game3PlayerController : MonoBehaviour
 
     public void Hitted()
     {
-        health--;
+        curHealth--;
         //healthTxt.text = "Health: " + health;
         gameScreen.ReduceHealth(1);
-        if (health <= 0)
+        if (curHealth <= 0)
         {
             print("Dead...");
             dead = true;
@@ -252,8 +256,8 @@ public class Game3PlayerController : MonoBehaviour
 
     public void UseShine()
     {
-        chakra -= shineChakraCost;
-        if (chakra >= 0)
+        curChakra -= shineChakraCost;
+        if (curChakra >= 0)
         {
             //chakraTxt.text = "Chakra: " + chakra;
             gameScreen.ReduceChakra(shineChakraCost);
@@ -263,14 +267,14 @@ public class Game3PlayerController : MonoBehaviour
 
     public void GetHeart()
     {
-        health++;
+        curHealth++;
         gameScreen.AddHealth();
         //healthTxt.text = "Health: " + health;
     }
 
     public void GetScroll()
     {
-        chakra++;
+        curChakra++;
         gameScreen.AddChakra();
         //chakraTxt.text = "Chakra: " + chakra;
     }

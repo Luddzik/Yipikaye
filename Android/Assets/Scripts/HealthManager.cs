@@ -10,20 +10,23 @@ public class HealthManager : MonoBehaviour {
     [SerializeField] private Image[] healthImage; //location in the canvas
     [SerializeField] private Sprite[] healthSprite; //empty (0) and full (1)
 
+    [SerializeField] private Image healthBG;
+    [SerializeField] private Sprite[] healthBgSprite;
+
     private int maxHealthAmount = 5;
     //private int maxHealth;
     private int healthPerHeart = 1;
 
-	void Start () 
+	//void Start () 
+ //   {
+ //       curHealth = startHealth;
+ //       //maxHealth = maxHealthAmount;
+ //       checkHealthAmount();
+	//}
+	
+    public void SetHealth(int health)
     {
-        //curHealth = startHealth;
-        //maxHealth = maxHealthAmount;
-        //checkHealthAmount();
-	}
-
-    public void SetHealth(int amount)
-    {
-        curHealth = amount;
+        curHealth = health;
         checkHealthAmount();
     }
 
@@ -47,6 +50,15 @@ public class HealthManager : MonoBehaviour {
     {
         bool empty = false;
         int i = 0;
+
+        if( curHealth <= 1 )
+        {
+            healthBG.sprite = healthBgSprite[1];
+        }
+        if (curHealth > 1)
+        {
+            healthBG.sprite = healthBgSprite[0];
+        }
 
         foreach (Image image in healthImage)
         {
@@ -77,7 +89,12 @@ public class HealthManager : MonoBehaviour {
     {
         curHealth -= amount;
         curHealth = Mathf.Clamp(curHealth, 0, maxHealthAmount);
-        checkHealthAmount();
+        if (curHealth <= 0)
+        {
+            //UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver", UnityEngine.SceneManagement.LoadSceneMode.Single);
+            //it is not used here, need to set canvas active/inactive for gamewin and gameover screen
+        }
+        UpdateHealth();
     }
 
     public void AddHealth()

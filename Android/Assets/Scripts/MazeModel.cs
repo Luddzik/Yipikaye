@@ -38,6 +38,7 @@ public class MazeModel : MonoBehaviour {
         get { return size; }
         set { size = value; }
     }
+    public int totalCollectableNum;
     public Tile[,] grid;
     //public Tile[,] innerGrid;
     public bool[,] impassibles; //store the booleans of whether a wall is passible.

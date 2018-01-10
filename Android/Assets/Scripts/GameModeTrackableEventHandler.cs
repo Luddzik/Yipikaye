@@ -8,10 +8,10 @@ public class GameModeTrackableEventHandler : MonoBehaviour, ITrackableEventHandl
     
     public MazeGenerator generator;
     public GameObject gameUI;
+    public GameObject gameSelection;
 
     #region PRIVATE_MEMBER_VARIABLES
 
-    private bool mazeGenerated = false;
     protected TrackableBehaviour mTrackableBehaviour;
 
     #endregion // PRIVATE_MEMBER_VARIABLES
@@ -89,12 +89,23 @@ public class GameModeTrackableEventHandler : MonoBehaviour, ITrackableEventHandl
 
         // Enable game objects
         transform.GetChild(0).gameObject.SetActive(true);
-        gameUI.SetActive(true);
-        if (!mazeGenerated)
+        if (!generator.mazeGenerated)
         {
-            generator.StartGeneration();
-            mazeGenerated = true;
+            int pastRating = 0;
+            if (generator.gameMode == 1)
+                pastRating = PlayerPrefs.GetInt("Mode1Rating");
+            else if(generator.gameMode == 2)
+                pastRating = PlayerPrefs.GetInt("Mode2Rating");
+
+            gameSelection.SetActive(true);
+            gameSelection.GetComponent<StarManage>().SetStar(pastRating);
         }
+        //gameUI.SetActive(true);
+        //if (!mazeGenerated)
+        //{
+        //    generator.StartGeneration();
+        //    mazeGenerated = true;
+        //}
     }
 
 
