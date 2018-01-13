@@ -1,0 +1,18 @@
+Sounds to record?
+- Menu
+  > Theme: Susano-o's Appearance [Okami OST], Save 1 [Okami OST]
+  > Selection: Ushiwaka's Last Dance [Okami OST]
+  > Back press: Competition with Idaten Start [Okami OST]
+  > Transistions, The Begininng [Okami OST]
+- Collectable pickup
+  > Item Acquisition [Okami OST]
+- Stage complete
+  > Boss Battle Clear [Okami OST]
+- Enemy guards
+  > Alerted, Hopeless! [Okami OST], Scoundrel Appearance [Okami OST]
+- Game complete
+  > Victory Cry [Okami OST]
+- You died
+  > Close Call Amaterasu [Okami OST]
+- Game Over
+  > Death [Okami OST]
