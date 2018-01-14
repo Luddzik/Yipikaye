@@ -56,6 +56,7 @@ GameObject:
   - component: {fileID: 95824067750047212}
   - component: {fileID: 65003655116799640}
   - component: {fileID: 54785818256567448}
+  - component: {fileID: 114641132205604848}
   m_Layer: 9
   m_Name: WallDecoration
   m_TagString: Untagged
@@ -118,7 +119,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: ead50b977277cd34b82ee114f3895700, type: 2}
+  - {fileID: 2100000, guid: a019bbb8340adc342b8b160ea6ea704a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -230,3 +231,17 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114641132205604848
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1997417702903668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0995d01f9193fec4396a68dcf9d87556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 23659233806033096}
+  - {fileID: 23768454048982850}

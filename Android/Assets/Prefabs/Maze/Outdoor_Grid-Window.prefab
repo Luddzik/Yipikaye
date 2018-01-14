@@ -88,6 +88,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4162822041340108}
   - component: {fileID: 65043328304821574}
+  - component: {fileID: 114467901607828528}
   m_Layer: 9
   m_Name: Outdoor_Grid-Window
   m_TagString: Untagged
@@ -1331,7 +1332,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1122787440195148}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 3.9562402, y: 1.17, z: 0.22484398}
@@ -1370,3 +1371,26 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114467901607828528
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1122787440195148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0995d01f9193fec4396a68dcf9d87556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 23817501921167700}
+  - {fileID: 23533302847710160}
+  - {fileID: 23287770850696656}
+  - {fileID: 23571543558385050}
+  - {fileID: 23882692731623372}
+  - {fileID: 23150172237925676}
+  - {fileID: 23797954985961378}
+  - {fileID: 23432080529964800}
+  - {fileID: 23018475446442440}
+  - {fileID: 23523812694310022}
+  - {fileID: 23482009349551752}

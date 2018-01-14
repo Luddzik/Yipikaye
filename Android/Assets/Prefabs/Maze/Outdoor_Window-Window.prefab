@@ -188,6 +188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4933568628390192}
   - component: {fileID: 65494999991904858}
+  - component: {fileID: 114508936214188104}
   m_Layer: 9
   m_Name: Outdoor_Window-Window
   m_TagString: Untagged
@@ -1403,7 +1404,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1673924369218292}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 3.9562402, y: 1.17, z: 0.22484398}
@@ -1442,3 +1443,27 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114508936214188104
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1673924369218292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0995d01f9193fec4396a68dcf9d87556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 23985813651922162}
+  - {fileID: 23693778679135806}
+  - {fileID: 23262283952088738}
+  - {fileID: 23193193131963134}
+  - {fileID: 23197011278031200}
+  - {fileID: 23476466392660380}
+  - {fileID: 23442490194689216}
+  - {fileID: 23691239675125268}
+  - {fileID: 23060453922373064}
+  - {fileID: 23207889511818142}
+  - {fileID: 23890355518297024}
+  - {fileID: 23953300290381862}

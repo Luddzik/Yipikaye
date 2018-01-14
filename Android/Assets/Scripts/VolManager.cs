@@ -15,12 +15,12 @@ public class VolManager : MonoBehaviour
     void Start()
     {
         //audioSource = GetComponent<AudioSource>();
-
+        volSlider.value = PlayerPrefs.GetFloat("SliderVolume", AudioListener.volume);
         text.text = (volSlider.value * 100f).ToString();
 
         // get the float value of SliderVolumeLevel if it has been saved with PlayerPrefs.SetFloat()
         // else use defult value of audioSource.volume
-        AudioListener.volume = PlayerPrefs.GetFloat("SliderVolume", AudioListener.volume);
+        AudioListener.volume = volSlider.value;
     }
 
     // AudioListener.volume will have a value 0.0f to 1.0f

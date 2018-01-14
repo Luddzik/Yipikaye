@@ -17,7 +17,7 @@ public class BrightnessManager : MonoBehaviour
     {
         //Here the GameType has to be changed too!
         //brightness = GetComponent<GameObject>();
-
+        brightnessSlider.value = PlayerPrefs.GetFloat("SliderBrightness");
         textBrightness.text = (brightnessSlider.value * 100f).ToString();
 
         //has to use correct subthing not sure which one so add this too. 

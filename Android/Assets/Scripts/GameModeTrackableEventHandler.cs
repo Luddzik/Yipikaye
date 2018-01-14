@@ -9,6 +9,7 @@ public class GameModeTrackableEventHandler : MonoBehaviour, ITrackableEventHandl
     public MazeGenerator generator;
     public GameObject gameUI;
     public GameObject gameSelection;
+    public GameObject backButton;
 
     #region PRIVATE_MEMBER_VARIABLES
 
@@ -94,14 +95,17 @@ public class GameModeTrackableEventHandler : MonoBehaviour, ITrackableEventHandl
             int pastRating = 0;
             if (generator.gameMode == 1)
                 pastRating = PlayerPrefs.GetInt("Mode1Rating");
-            else if(generator.gameMode == 2)
+            else if (generator.gameMode == 2)
                 pastRating = PlayerPrefs.GetInt("Mode2Rating");
 
             gameSelection.SetActive(true);
             gameSelection.GetComponent<StarManage>().SetStar(pastRating);
         }
         else
+        {
             gameUI.SetActive(true);
+            backButton.SetActive(false);
+        }
         //if (!mazeGenerated)
         //{
         //    generator.StartGeneration();
@@ -115,6 +119,13 @@ public class GameModeTrackableEventHandler : MonoBehaviour, ITrackableEventHandl
         var rendererComponents = GetComponentsInChildren<Renderer>(true);
         var colliderComponents = GetComponentsInChildren<Collider>(true);
         var canvasComponents = GetComponentsInChildren<Canvas>(true);
+
+        // Disable game objects
+        if (transform.GetChild(0).gameObject != null)
+            transform.GetChild(0).gameObject.SetActive(false);
+        //gameUI.SetActive(false);
+        if (backButton != null)
+            backButton.SetActive(true);
 
         // Disable rendering:
         foreach (var component in rendererComponents)
@@ -131,9 +142,7 @@ public class GameModeTrackableEventHandler : MonoBehaviour, ITrackableEventHandl
         // Disable gravity:
         //transform.GetChild(0).GetComponent<GravityPull>().enabled = false;
 
-        // Disable game objects
-        transform.GetChild(0).gameObject.SetActive(false);
-        gameUI.SetActive(false);
+        
     }
 
     #endregion // PRIVATE_METHODS

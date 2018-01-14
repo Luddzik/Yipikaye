@@ -113,13 +113,13 @@ public class Game3PlayerController : MonoBehaviour
 
         Vector3 dpadVector;
         if (dir == 0)
-            dpadVector = Vector3.forward;
+            dpadVector = Camera.main.transform.forward;
         else if (dir == 1)
-            dpadVector = Vector3.back;
+            dpadVector = -Camera.main.transform.forward;
         else if (dir == 2)
-            dpadVector = Vector3.left;
+            dpadVector = Camera.main.transform.right;
         else if (dir == 3)
-            dpadVector = Vector3.right;
+            dpadVector = -Camera.main.transform.right;
         else
             return;
 

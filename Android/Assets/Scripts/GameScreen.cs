@@ -39,7 +39,7 @@ public class GameScreen : MonoBehaviour {
         //miniMap.SetActive(false);
         gameScreen.SetActive(true);
         Scene scene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(scene.name);
+        SceneManager.LoadScene("RandomMap", LoadSceneMode.Single); //scene.name);
     }
 
     public void MiniMap()

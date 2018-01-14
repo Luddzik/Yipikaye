@@ -11,11 +11,15 @@ public class PlayerCentering : MonoBehaviour {
     public LayerMask obstacleLayerMask;
     public LayerMask playerLayerMask;
     public float speed;
-    
+    public Transform playerPos;
+
     private RaycastHit hitted;
     private bool centered = false;
     private int playerLayer;
     private int allButPlayerLayer;
+    [SerializeField]
+    private Transform hittedTF;
+    private Obstacle obstacle;
 
     public void CenterToThePlayer()
     {
@@ -52,6 +56,9 @@ public class PlayerCentering : MonoBehaviour {
         lookAtCamera.LookAt(Camera.main.transform);
 
         lookAtCamera.rotation = Quaternion.Euler(lookAtCamera.rotation.eulerAngles.x, 180, 0);
+
+        ClearBlockingCameraObject();
+
         //if (centered)
         //{
         //    if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitted, 100, obstacleLayerMask, QueryTriggerInteraction.Collide))
@@ -92,5 +99,26 @@ public class PlayerCentering : MonoBehaviour {
         if (angle >= 180)
             return angle - 360;
         else return angle;
+    }
+
+    private void ClearBlockingCameraObject()
+    {
+        Vector3 playerDir = (playerPos.position - Camera.main.transform.position).normalized;
+        if (Physics.Raycast(Camera.main.transform.position, playerDir, out hitted, 100, obstacleLayerMask, QueryTriggerInteraction.Collide))
+        {
+            print("hitted" + hitted.transform.name);
+            if(obstacle != null && hittedTF != hitted.transform)
+            {
+                obstacle.TurnOnRenderers();
+            }
+            hittedTF = hitted.transform;
+            obstacle = hitted.transform.GetComponent<Obstacle>();
+            obstacle.TurnOffRenderers();
+        }
+        else if(obstacle != null)
+        {
+            obstacle.TurnOnRenderers();
+            obstacle = null;
+        }
     }
 }
