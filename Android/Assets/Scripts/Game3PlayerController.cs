@@ -326,12 +326,14 @@ public class Game3PlayerController : MonoBehaviour
             {
                 print("get scroll");
                 GetScroll();
+                other.GetComponent<AudioSource>().PlayOneShot(other.GetComponent<AudioSource>().clip);
                 Destroy(other.gameObject);
             }
             else if (other.gameObject.CompareTag("Heart"))
             {
                 print("get Heart");
                 GetHeart();
+                other.GetComponent<AudioSource>().PlayOneShot(other.GetComponent<AudioSource>().clip);
                 Destroy(other.gameObject);
             }
             else if (other.gameObject.CompareTag("Enemy"))

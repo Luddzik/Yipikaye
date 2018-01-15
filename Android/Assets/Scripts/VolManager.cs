@@ -28,5 +28,6 @@ public class VolManager : MonoBehaviour
     {
         text.text = (volSlider.value * 100f).ToString();
         PlayerPrefs.SetFloat("SliderVolume", volSlider.value);
+        AudioListener.volume = volSlider.value;
     }
 }
