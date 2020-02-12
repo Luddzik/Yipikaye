@@ -10,9 +10,12 @@ using UnityEngine;
 using Vuforia;
 
 /// <summary>
-///     A custom handler that registers for Vuforia initialization errors
+/// A custom handler that registers for Vuforia initialization errors
+/// 
+/// Changes made to this file could be overwritten when upgrading the Vuforia version. 
+/// When implementing custom error handler behavior, consider inheriting from this class instead.
 /// </summary>
-public class DefaultInitializationErrorHandler : MonoBehaviour
+public class DefaultInitializationErrorHandler : VuforiaMonoBehaviour
 {
     #region Vuforia_lifecycle_events
 
@@ -32,7 +35,7 @@ public class DefaultInitializationErrorHandler : MonoBehaviour
     string mErrorText = "";
     bool mErrorOccurred;
 
-    const string headerLabel = "Vuforia Initialization Error";
+    const string headerLabel = "Vuforia Engine Initialization Error";
 
     GUIStyle bodyStyle;
     GUIStyle headerStyle;
@@ -101,18 +104,18 @@ public class DefaultInitializationErrorHandler : MonoBehaviour
         {
             case VuforiaUnity.InitError.INIT_EXTERNAL_DEVICE_NOT_DETECTED:
                 mErrorText =
-                    "Failed to initialize Vuforia because this " +
+                    "Failed to initialize the Vuforia Engine because this " +
                     "device is not docked with required external hardware.";
                 break;
             case VuforiaUnity.InitError.INIT_LICENSE_ERROR_MISSING_KEY:
                 mErrorText =
-                    "Vuforia App key is missing. Please get a valid key " +
+                    "Vuforia Engine App key is missing. Please get a valid key " +
                     "by logging into your account at developer.vuforia.com " +
                     "and creating a new project.";
                 break;
             case VuforiaUnity.InitError.INIT_LICENSE_ERROR_INVALID_KEY:
                 mErrorText =
-                    "Vuforia App key is invalid. " +
+                    "Vuforia Engine App key is invalid. " +
                     "Please get a valid key by logging into your account at " +
                     "developer.vuforia.com and creating a new project. \n\n" +
                     getKeyInfo();
@@ -131,28 +134,26 @@ public class DefaultInitializationErrorHandler : MonoBehaviour
                 break;
             case VuforiaUnity.InitError.INIT_LICENSE_ERROR_PRODUCT_TYPE_MISMATCH:
                 mErrorText =
-                    "Vuforia App key is not valid for this product. Please get a valid key " +
+                    "Vuforia Engine App key is not valid for this product. Please get a valid key " +
                     "by logging into your account at developer.vuforia.com and choosing the " +
                     "right product type during project creation. \n\n" +
                     getKeyInfo() + " \n\n" +
                     "Note that Universal Windows Platform (UWP) apps require " +
                     "a license key created on or after August 9th, 2016.";
                 break;
-#if (UNITY_IPHONE || UNITY_IOS)
-                case VuforiaUnity.InitError.INIT_NO_CAMERA_ACCESS:
-                    mErrorText = 
-                        "Camera Access was denied to this App. \n" + 
-                        "When running on iOS8 devices, \n" + 
-                        "users must explicitly allow the App to access the camera.\n" + 
-                        "To restore camera access on your device, go to: \n" + 
-                        "Settings > Privacy > Camera > [This App Name] and switch it ON.";
-                    break;
-    #endif
+            case VuforiaUnity.InitError.INIT_NO_CAMERA_ACCESS:
+                mErrorText = 
+                    "User denied Camera access to this app.\n" +
+                    "To restore, enable Camera access in Settings:\n" +
+                    "Settings > Privacy > Camera > " + Application.productName + "\n" +
+                    "Also verify that the Camera is enabled in:\n" +
+                    "Settings > General > Restrictions.";
+                break;
             case VuforiaUnity.InitError.INIT_DEVICE_NOT_SUPPORTED:
-                mErrorText = "Failed to initialize Vuforia because this device is not supported.";
+                mErrorText = "Failed to initialize Vuforia Engine because this device is not supported.";
                 break;
             case VuforiaUnity.InitError.INIT_ERROR:
-                mErrorText = "Failed to initialize Vuforia.";
+                mErrorText = "Failed to initialize Vuforia Engine.";
                 break;
         }
 
@@ -162,7 +163,7 @@ public class DefaultInitializationErrorHandler : MonoBehaviour
         // Remove rich text tags for console logging
         var errorTextConsole = mErrorText.Replace("<color=red>", "").Replace("</color>", "");
 
-        Debug.LogError("Vuforia initialization failed: " + errorCode + "\n\n" + errorTextConsole);
+        Debug.LogError("Vuforia Engine initialization failed: " + errorCode + "\n\n" + errorTextConsole);
     }
 
     void SetErrorOccurred(bool errorOccurred)

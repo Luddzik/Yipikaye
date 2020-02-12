@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class MazeGenerator : MonoBehaviour {
 
@@ -98,7 +99,7 @@ public class MazeGenerator : MonoBehaviour {
     }
 
 
-
+    [ContextMenu("GenerateMap")]
     public void StartGeneration()
     {
         if (mazeGenerated)
